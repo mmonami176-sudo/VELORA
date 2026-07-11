@@ -796,7 +796,7 @@ function sendWhatsApp(){
   if(!addr){ toast('أدخل عنوانك'); return; }
 
   var items = CART.map(function(c, i){
-    return (i+1)+'. '+c.name+(c.size?' ('+c.size+')')+'  ×'+c.qty+'  = '+c.price*c.qty+' درهم';
+    return (i+1)+'. '+c.name+(c.size?' ('+c.size+')':'')+'  ×'+c.qty+'  = '+c.price*c.qty+' درهم';
   }).join('\n');
 
   var total = cartTotal();
