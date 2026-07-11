@@ -635,16 +635,20 @@ async function uploadImg(dataUrl, prodId, idx){
   try{ var ex = await ghGet('imgs/'+filename); sha = ex.sha; }catch(e){}
   var body = {message:'img: '+filename, content:base64, branch:GH_BRANCH};
   if(sha) body.sha = sha;
-  var r = await fetch(
-    'https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/imgs/'+filename,
-    {method:'PUT',
-     headers:{Authorization:'token '+ghToken(),Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},
-     body:JSON.stringify(body)}
-  );
-  if(!r.ok) return dataUrl;
-  var res = await r.json();
-  /* raw.githubusercontent.com لا يحتاج توكن — مناسب للمتجر */
-  return 'https://raw.githubusercontent.com/'+GH_OWNER+'/'+GH_REPO+'/'+GH_BRANCH+'/imgs/'+filename;
+  try{
+    var r = await fetch(
+      'https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/imgs/'+filename,
+      {method:'PUT',
+       headers:{Authorization:'token '+ghToken(),Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},
+       body:JSON.stringify(body)}
+    );
+    if(!r.ok) return dataUrl; /* فشل رفع هذه الصورة فقط — استمر بباقي المنتج */
+    var res = await r.json();
+    /* raw.githubusercontent.com لا يحتاج توكن — مناسب للمتجر */
+    return 'https://raw.githubusercontent.com/'+GH_OWNER+'/'+GH_REPO+'/'+GH_BRANCH+'/imgs/'+filename;
+  }catch(e){
+    return dataUrl; /* خطأ شبكة — لا نوقف نشر المنتج كله بسبب صورة واحدة */
+  }
 }
 
 /* مزامنة قائمة المنتجات مع products.json على GitHub */
@@ -942,42 +946,48 @@ async function saveProduct(){
 
   var prodId = editId || ('p'+ Date.now());
 
-  /* رفع الصور إلى GitHub وتحويلها إلى روابط عامة */
   setBusy(true);
-  toast('⏳ جارٍ رفع الصور...');
-  var imgs = [];
-  for(var i=0; i<rawImgs.length; i++){
-    var url = await uploadImg(rawImgs[i], prodId, i);
-    imgs.push(url);
+  try{
+    /* رفع الصور إلى GitHub وتحويلها إلى روابط عامة */
+    toast('⏳ جارٍ رفع الصور...');
+    var imgs = [];
+    for(var i=0; i<rawImgs.length; i++){
+      var url = await uploadImg(rawImgs[i], prodId, i);
+      imgs.push(url);
+    }
+
+    var prod = {
+      id: prodId,
+      name: name,
+      cat: document.getElementById('fCat').value,
+      tag: document.getElementById('fTag').value,
+      price: price,
+      old: parseFloat(document.getElementById('fOld').value)||0,
+      desc: document.getElementById('fDesc').value.trim(),
+      sizes: sizes.length?sizes:['مقاس موحد'],
+      imgs: imgs,
+      img: imgs[0],
+      freeDelivery: document.getElementById('fFD').checked,
+    };
+
+    var prods = getProds();
+    if(editId){
+      prods = prods.map(function(p){ return p.id===editId ? prod : p; });
+    } else {
+      prods.push(prod);
+    }
+    saveProds(prods);
+    closeForm();
+    renderProdList();
+    renderDashboard();
+
+    /* مزامنة مع GitHub */
+    await syncToGH(prods);
+  }catch(e){
+    toast('❌ فشل نشر المنتج: '+(e&&e.message?e.message:'خطأ غير معروف'));
+  }finally{
+    setBusy(false);
   }
-
-  var prod = {
-    id: prodId,
-    name: name,
-    cat: document.getElementById('fCat').value,
-    tag: document.getElementById('fTag').value,
-    price: price,
-    old: parseFloat(document.getElementById('fOld').value)||0,
-    desc: document.getElementById('fDesc').value.trim(),
-    sizes: sizes.length?sizes:['مقاس موحد'],
-    imgs: imgs,
-    img: imgs[0],
-    freeDelivery: document.getElementById('fFD').checked,
-  };
-
-  var prods = getProds();
-  if(editId){
-    prods = prods.map(function(p){ return p.id===editId ? prod : p; });
-  } else {
-    prods.push(prod);
-  }
-  saveProds(prods);
-  closeForm();
-  renderProdList();
-  renderDashboard();
-
-  /* مزامنة مع GitHub */
-  await syncToGH(prods);
 }
 
 /* ── Delivery ── */
