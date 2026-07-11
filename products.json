@@ -96,5 +96,24 @@
     ],
     "img": "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783792240375-0.jpg",
     "freeDelivery": true
+  },
+  {
+    "id": "p1783792605176",
+    "name": "بلغة شاشي",
+    "cat": "أخرى",
+    "tag": "جديد",
+    "price": 129,
+    "old": 0,
+    "desc": "بلغة شاشي طالعة متوفرة فجميع المقاسات",
+    "sizes": [
+      "مقاس موحد"
+    ],
+    "imgs": [
+      "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783792605176-0.jpg",
+      "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783792605176-1.jpg",
+      "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783792605176-2.jpg"
+    ],
+    "img": "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783792605176-0.jpg",
+    "freeDelivery": true
   }
 ]
