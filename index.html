@@ -105,7 +105,7 @@ nav a:hover{color:var(--gold)}
 .pc:hover .pc-img img{transform:scale(1.06)}
 .pc-badge{position:absolute;top:8px;right:8px;font-size:9px;font-weight:800;padding:3px 8px;letter-spacing:1px;text-transform:uppercase;border-radius:2px}
 .pc-new{background:var(--black);color:var(--gold);border:1px solid var(--gold)}
-.pc-fd{background:#f1c40f;color:#0a0a0a;box-shadow:0 2px 8px rgba(241,196,15,.4)}
+.pc-fd{background:#f1c40f;color:#0a0a0a;box-shadow:0 2px 8px rgba(241,196,15,.4);right:auto;left:6px;top:6px;font-size:7px;padding:2px 5px;border-radius:3px;letter-spacing:.5px}
 .pc-overlay{position:absolute;inset:0;background:rgba(10,10,10,.55);display:flex;align-items:center;justify-content:center;opacity:0;transition:.2s}
 .pc:hover .pc-overlay{opacity:1}
 .pc-quick{background:var(--gold);color:var(--black);border:none;padding:9px 18px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:var(--font-ar);transition:.15s;border-radius:2px}
@@ -424,16 +424,15 @@ footer{background:var(--black2);border-top:1px solid var(--border);padding:40px 
       </div>
       <div class="of">
         <label>المدينة</label>
-        <select id="oCity">
-          <option value="">اختر المدينة</option>
+        <input id="oCity" list="cityList" placeholder="اكتب اسم مدينتك" type="text" autocomplete="off">
+        <datalist id="cityList">
           <option>الرباط</option><option>الدار البيضاء</option><option>مراكش</option>
           <option>فاس</option><option>طنجة</option><option>أكادير</option>
           <option>مكناس</option><option>وجدة</option><option>القنيطرة</option>
           <option>تطوان</option><option>سلا</option><option>بني ملال</option>
           <option>العيون</option><option>الجديدة</option><option>سطات</option>
           <option>خريبكة</option><option>تازة</option><option>الناظور</option>
-          <option>أخرى</option>
-        </select>
+        </datalist>
       </div>
     </div>
     <div class="of">
@@ -573,8 +572,7 @@ function renderProducts(){
       '<div class="pc-img">'+
         '<img src="'+mainImg+'" alt="'+p.name+'" loading="lazy" onerror="this.src=\'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&fit=crop\'">'+
         (showFD?'<div class="pc-badge pc-fd">'+fdText+'</div>':'')+
-        (p.tag && !showFD?'<div class="pc-badge pc-new">'+p.tag+'</div>':'')+
-        (p.tag && showFD?'<div class="pc-badge pc-new" style="top:38px">'+p.tag+'</div>':'')+
+        (p.tag?'<div class="pc-badge pc-new">'+p.tag+'</div>':'')+
         '<div class="pc-overlay"><button class="pc-quick" data-id="'+p.id+'">تفاصيل</button></div>'+
       '</div>'+
       '<div class="pc-body">'+
@@ -616,6 +614,7 @@ document.getElementById('grid').addEventListener('click', function(e){
 });
 
 document.querySelectorAll('.cat-btn').forEach(function(b){
+  if(b.dataset.cat === undefined) return; /* يستثني زر التحديث 🔄 من فلترة التصنيفات */
   b.addEventListener('click', function(){ setFilter(this.dataset.cat); });
 });
 
