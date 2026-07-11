@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VELORA — لوحة التحكم</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#0a0a0a;--black2:#111;--black3:#1a1a1a;--black4:#222;--black5:#2a2a2a;
+  --gold:#c9a84c;--gold2:#d4af37;--gold3:#b8961e;--gold-light:#e8d08a;
+  --white:#fff;--muted:#888;--muted2:#555;--border:rgba(201,168,76,.18);
+  --red:#e74c3c;--green:#27ae60;--yellow:#f1c40f;
+  --font:'Cairo',sans-serif;
+  --radius:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:var(--font)}
+body{background:var(--black);color:var(--white);overflow-x:hidden}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--gold3)}
+
+/* ── LOGIN ── */
+#loginScreen{
+  position:fixed;inset:0;background:var(--black);display:flex;
+  align-items:center;justify-content:center;z-index:999;
+}
+.login-box{
+  background:var(--black2);border:1px solid var(--border);
+  border-radius:16px;padding:40px 32px;width:320px;text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.8);
+}
+.login-logo{font-size:26px;font-weight:800;color:var(--gold);letter-spacing:4px;margin-bottom:4px}
+.login-sub{font-size:11px;color:var(--muted);letter-spacing:3px;margin-bottom:32px}
+.login-err{background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);
+  color:var(--red);padding:10px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none}
+.inp{
+  width:100%;background:var(--black3);border:1px solid var(--border);
+  color:var(--white);padding:13px 16px;border-radius:8px;font-family:var(--font);
+  font-size:14px;outline:none;margin-bottom:12px;text-align:center;letter-spacing:4px;
+}
+.inp:focus{border-color:var(--gold)}
+.btn-gold{
+  width:100%;background:var(--gold);color:var(--black);border:none;
+  padding:13px;border-radius:8px;font-family:var(--font);font-size:15px;
+  font-weight:700;cursor:pointer;letter-spacing:1px;transition:.2s;
+}
+.btn-gold:hover{background:var(--gold2)}
+
+/* ── LAYOUT ── */
+#app{display:none;height:100vh;flex-direction:column}
+#app.show{display:flex}
+
+.topbar{
+  background:var(--black2);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;height:56px;flex-shrink:0;
+}
+.topbar-logo{font-size:18px;font-weight:800;color:var(--gold);letter-spacing:3px}
+.topbar-actions{display:flex;align-items:center;gap:10px}
+.btn-sm{
+  background:var(--black4);color:var(--muted);border:1px solid var(--border);
+  padding:7px 14px;border-radius:6px;font-family:var(--font);font-size:12px;
+  cursor:pointer;transition:.2s;
+}
+.btn-sm:hover{border-color:var(--gold);color:var(--gold)}
+.btn-sm.danger{color:var(--red);border-color:rgba(231,76,60,.3)}
+.btn-sm.danger:hover{border-color:var(--red)}
+
+.main{display:flex;flex:1;overflow:hidden}
+
+.sidebar{
+  width:200px;background:var(--black2);border-left:1px solid var(--border);
+  flex-shrink:0;overflow-y:auto;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:14px 18px;
+  cursor:pointer;color:var(--muted);font-size:14px;font-weight:600;
+  border-bottom:1px solid rgba(255,255,255,.04);transition:.15s;
+}
+.nav-item:hover{color:var(--white);background:var(--black3)}
+.nav-item.on{color:var(--gold);background:rgba(201,168,76,.08);border-right:3px solid var(--gold)}
+.nav-item .ico{font-size:18px;width:22px;text-align:center}
+
+.content{flex:1;overflow-y:auto;padding:24px}
+
+/* ── SECTIONS ── */
+.section{display:none}
+.section.on{display:block}
+
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.section-title{font-size:20px;font-weight:700;color:var(--white)}
+.section-sub{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* ── CARDS ── */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:24px}
+.stat-card{background:var(--black2);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.stat-num{font-size:28px;font-weight:800;color:var(--gold)}
+.stat-label{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* ── PRODUCT LIST ── */
+.prod-list{display:flex;flex-direction:column;gap:10px}
+.prod-row{
+  background:var(--black2);border:1px solid var(--border);border-radius:var(--radius);
+  display:flex;align-items:center;gap:12px;padding:10px 14px;transition:.15s;
+}
+.prod-row:hover{border-color:var(--gold)}
+.prod-thumb{
+  width:52px;height:52px;border-radius:6px;object-fit:cover;background:var(--black4);flex-shrink:0;
+}
+.prod-info{flex:1;min-width:0}
+.prod-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prod-meta{display:flex;gap:8px;margin-top:4px;flex-wrap:wrap}
+.prod-tag{font-size:11px;padding:2px 8px;border-radius:20px}
+.tag-cat{background:rgba(201,168,76,.15);color:var(--gold)}
+.tag-new{background:rgba(39,174,96,.15);color:var(--green)}
+.tag-sale{background:rgba(241,196,15,.15);color:var(--yellow)}
+.tag-free{background:rgba(241,196,15,.2);color:var(--yellow)}
+.prod-price{font-size:15px;font-weight:700;color:var(--gold);flex-shrink:0}
+.prod-actions{display:flex;gap:6px;flex-shrink:0}
+.act-btn{
+  width:32px;height:32px;border-radius:6px;border:1px solid var(--border);
+  background:var(--black4);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:14px;transition:.15s;
+}
+.act-btn:hover{border-color:var(--gold)}
+.act-btn.del:hover{border-color:var(--red)}
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted);font-size:14px}
+.empty-icon{font-size:48px;margin-bottom:12px}
+
+/* ── BUTTON ROW ── */
+.btn-add{
+  background:var(--gold);color:var(--black);border:none;padding:11px 20px;
+  border-radius:8px;font-family:var(--font);font-size:14px;font-weight:700;
+  cursor:pointer;transition:.2s;display:flex;align-items:center;gap:6px;
+}
+.btn-add:hover{background:var(--gold2)}
+.btn-outline{
+  background:transparent;color:var(--gold);border:1px solid var(--gold);
+  padding:10px 18px;border-radius:8px;font-family:var(--font);font-size:14px;
+  font-weight:600;cursor:pointer;transition:.2s;
+}
+.btn-outline:hover{background:rgba(201,168,76,.1)}
+
+/* ── MODAL ── */
+.overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;
+  display:none;align-items:flex-start;justify-content:center;
+  padding:20px;overflow-y:auto;
+}
+.overlay.show{display:flex}
+.modal{
+  background:var(--black2);border:1px solid var(--border);border-radius:16px;
+  width:100%;max-width:600px;margin:auto;padding:28px;
+}
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.modal-title{font-size:17px;font-weight:700}
+.modal-close{
+  width:32px;height:32px;background:var(--black4);border:1px solid var(--border);
+  border-radius:6px;cursor:pointer;font-size:18px;color:var(--muted);
+  display:flex;align-items:center;justify-content:center;transition:.15s;
+}
+.modal-close:hover{border-color:var(--red);color:var(--red)}
+
+/* ── FORM ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-full{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.5px}
+.field input,.field select,.field textarea{
+  background:var(--black3);border:1px solid var(--border);color:var(--white);
+  padding:11px 14px;border-radius:8px;font-family:var(--font);font-size:14px;
+  outline:none;transition:.15s;width:100%;
+}
+.field input:focus,.field select,.field textarea:focus{border-color:var(--gold)}
+.field select{cursor:pointer;appearance:none}
+.field select option{background:var(--black3)}
+.field textarea{resize:vertical;min-height:80px}
+
+/* ── SIZES ── */
+.sizes-wrap{display:flex;flex-wrap:wrap;gap:8px}
+.size-chip{
+  padding:6px 14px;border-radius:20px;border:1px solid var(--border);
+  font-size:12px;font-weight:600;cursor:pointer;transition:.15s;
+  background:var(--black3);color:var(--muted);
+}
+.size-chip.on{background:rgba(201,168,76,.15);border-color:var(--gold);color:var(--gold)}
+
+/* ── IMAGES UPLOAD ── */
+.imgs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.img-slot{
+  aspect-ratio:1;border-radius:8px;border:2px dashed var(--border);
+  background:var(--black3);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;cursor:pointer;
+  position:relative;overflow:hidden;transition:.15s;
+}
+.img-slot:hover{border-color:var(--gold)}
+.img-slot .slot-ico{font-size:24px;color:var(--muted);pointer-events:none}
+.img-slot .slot-label{font-size:10px;color:var(--muted);margin-top:4px;pointer-events:none}
+.img-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.img-slot .rm-img{
+  position:absolute;top:4px;left:4px;background:rgba(0,0,0,.7);
+  border-radius:50%;width:22px;height:22px;display:flex;align-items:center;
+  justify-content:center;font-size:12px;color:var(--white);cursor:pointer;z-index:2;
+}
+.img-slot input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:1}
+
+/* ── TOGGLE ── */
+.toggle-row{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--black3);border:1px solid var(--border);border-radius:8px;
+  padding:12px 14px;
+}
+.toggle-label{font-size:14px;font-weight:600}
+.toggle-desc{font-size:12px;color:var(--muted);margin-top:2px}
+.toggle{
+  position:relative;width:46px;height:26px;flex-shrink:0;
+}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-track{
+  position:absolute;inset:0;background:var(--black5);border-radius:13px;
+  border:1px solid var(--border);cursor:pointer;transition:.25s;
+}
+.toggle input:checked + .toggle-track{background:var(--gold);border-color:var(--gold)}
+.toggle-track::after{
+  content:'';position:absolute;width:18px;height:18px;border-radius:50%;
+  background:var(--white);top:3px;right:3px;transition:.25s;
+}
+.toggle input:checked + .toggle-track::after{right:auto;left:3px}
+
+/* ── SETTINGS ── */
+.settings-section{margin-bottom:20px}
+.settings-title{font-size:13px;font-weight:700;color:var(--gold);
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;
+  padding-bottom:6px;border-bottom:1px solid var(--border)}
+
+/* ── FREE DELIVERY PREVIEW ── */
+.fd-preview{
+  background:var(--yellow);color:var(--black);text-align:center;
+  padding:8px;border-radius:6px;font-size:13px;font-weight:700;
+  letter-spacing:1px;margin-top:10px;display:none;
+}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);
+  background:var(--black2);border:1px solid var(--gold);color:var(--gold);
+  padding:12px 24px;border-radius:30px;font-size:14px;font-weight:600;
+  transition:.3s;z-index:9999;white-space:nowrap;
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .sidebar{display:none}
+  .form-grid{grid-template-columns:1fr}
+  .imgs-grid{grid-template-columns:repeat(2,1fr)}
+  .content{padding:16px}
+  .modal{padding:20px}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">VELORA</div>
+    <div class="login-sub">ADMIN PANEL</div>
+    <div class="login-err" id="loginErr">كلمة السر غير صحيحة</div>
+    <input class="inp" id="pwdInp" type="password" placeholder="••••••" maxlength="30" autocomplete="current-password">
+    <button class="btn-gold" onclick="doLogin()">دخول</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- Topbar -->
+  <div class="topbar">
+    <span class="topbar-logo">VELORA</span>
+    <div class="topbar-actions">
+      <button class="btn-sm" onclick="window.open('/velora/','_blank')">🔗 المتجر</button>
+      <button class="btn-sm danger" onclick="logout()">خروج</button>
+    </div>
+  </div>
+  <div class="main">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="nav-item on" data-sec="dashboard"><span class="ico">📊</span>الرئيسية</div>
+      <div class="nav-item" data-sec="products"><span class="ico">📦</span>المنتجات</div>
+      <div class="nav-item" data-sec="delivery"><span class="ico">🚚</span>التوصيل</div>
+      <div class="nav-item" data-sec="settings"><span class="ico">⚙️</span>الإعدادات</div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="section on" id="sec-dashboard">
+        <div class="section-head">
+          <div>
+            <div class="section-title">مرحباً بك 👋</div>
+            <div class="section-sub">لوحة تحكم VELORA</div>
+          </div>
+        </div>
+        <div class="stat-grid" id="statsGrid"></div>
+        <div id="recentList"></div>
+      </div>
+
+      <!-- PRODUCTS -->
+      <div class="section" id="sec-products">
+        <div class="section-head">
+          <div>
+            <div class="section-title">المنتجات</div>
+            <div class="section-sub" id="prodCount">0 منتج</div>
+          </div>
+          <button class="btn-add" onclick="openForm()">+ إضافة منتج</button>
+        </div>
+        <div class="prod-list" id="prodList"></div>
+      </div>
+
+      <!-- DELIVERY -->
+      <div class="section" id="sec-delivery">
+        <div class="section-head">
+          <div><div class="section-title">إعدادات التوصيل</div></div>
+        </div>
+        <div style="max-width:500px;display:flex;flex-direction:column;gap:14px">
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">🚚 توصيل مجاني للجميع</div>
+              <div class="toggle-desc">يُضاف شارة صفراء فوق كل المنتجات</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="fdGlobal" onchange="saveFD()">
+              <div class="toggle-track"></div>
+            </label>
+          </div>
+          <div class="field">
+            <label>نص الشارة</label>
+            <input id="fdText" type="text" value="🚚 توصيل مجاني" oninput="saveFD()">
+          </div>
+          <div class="fd-preview" id="fdPreview">🚚 توصيل مجاني</div>
+          <button class="btn-add" style="align-self:flex-start" onclick="saveFD()">💾 حفظ</button>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="section" id="sec-settings">
+        <div class="section-head">
+          <div><div class="section-title">الإعدادات</div></div>
+        </div>
+        <div style="max-width:500px;display:flex;flex-direction:column;gap:20px">
+          <div class="settings-section">
+            <div class="settings-title">تغيير كلمة السر</div>
+            <div class="form-grid" style="grid-template-columns:1fr">
+              <div class="field">
+                <label>كلمة السر الحالية</label>
+                <input id="curPwd" type="password" placeholder="••••••">
+              </div>
+              <div class="field">
+                <label>كلمة السر الجديدة</label>
+                <input id="newPwd" type="password" placeholder="••••••">
+              </div>
+              <div class="field">
+                <label>تأكيد كلمة السر</label>
+                <input id="confPwd" type="password" placeholder="••••••">
+              </div>
+              <button class="btn-add" style="margin-top:4px" onclick="changePwd()">🔐 تحديث كلمة السر</button>
+            </div>
+          </div>
+          <div class="settings-section">
+            <div class="settings-title">رقم واتساب</div>
+            <div class="field">
+              <label>الرقم (مع رمز الدولة بدون +)</label>
+              <input id="waNum" type="tel" placeholder="212778878421">
+            </div>
+            <button class="btn-add" style="margin-top:10px" onclick="saveWA()">💾 حفظ</button>
+          </div>
+          <div class="settings-section">
+            <div class="settings-title">إدارة البيانات</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn-outline" onclick="exportData()">📤 تصدير المنتجات</button>
+              <button class="btn-sm danger" onclick="clearAllProds()">🗑️ حذف كل المنتجات</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT FORM MODAL -->
+<div class="overlay" id="formOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="formTitle">إضافة منتج جديد</div>
+      <div class="modal-close" onclick="closeForm()">✕</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+
+      <!-- Images -->
+      <div class="field form-full">
+        <label>الصور (الأولى هي الرئيسية)</label>
+        <div class="imgs-grid" id="imgsGrid">
+          <div class="img-slot" id="slot0" onclick="trigImg(0)">
+            <span class="slot-ico">📷</span>
+            <span class="slot-label">صورة رئيسية</span>
+            <input type="file" accept="image/*" onchange="loadImg(event,0)" onclick="event.stopPropagation()">
+          </div>
+          <div class="img-slot" id="slot1" onclick="trigImg(1)">
+            <span class="slot-ico">＋</span>
+            <span class="slot-label">صورة 2</span>
+            <input type="file" accept="image/*" onchange="loadImg(event,1)" onclick="event.stopPropagation()">
+          </div>
+          <div class="img-slot" id="slot2" onclick="trigImg(2)">
+            <span class="slot-ico">＋</span>
+            <span class="slot-label">صورة 3</span>
+            <input type="file" accept="image/*" onchange="loadImg(event,2)" onclick="event.stopPropagation()">
+          </div>
+          <div class="img-slot" id="slot3" onclick="trigImg(3)">
+            <span class="slot-ico">＋</span>
+            <span class="slot-label">صورة 4</span>
+            <input type="file" accept="image/*" onchange="loadImg(event,3)" onclick="event.stopPropagation()">
+          </div>
+        </div>
+        <div class="field" style="margin-top:8px">
+          <label>أو أدخل رابط صورة (اختياري)</label>
+          <input id="imgUrl" type="url" placeholder="https://...jpg">
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="field form-full">
+          <label>اسم المنتج *</label>
+          <input id="fName" type="text" placeholder="مثال: طقم مجوهرات ذهبي">
+        </div>
+        <div class="field">
+          <label>السعر (درهم) *</label>
+          <input id="fPrice" type="number" min="0" placeholder="199">
+        </div>
+        <div class="field">
+          <label>السعر القديم (اختياري)</label>
+          <input id="fOld" type="number" min="0" placeholder="250">
+        </div>
+        <div class="field">
+          <label>الفئة</label>
+          <select id="fCat">
+            <option value="مجوهرات">💛 مجوهرات</option>
+            <option value="ملابس">👗 ملابس</option>
+            <option value="عطور">🌸 عطور</option>
+            <option value="إكسسوارات">✨ إكسسوارات</option>
+            <option value="عناية">🧴 عناية</option>
+            <option value="أخرى">📦 أخرى</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>الشارة</label>
+          <select id="fTag">
+            <option value="">بدون شارة</option>
+            <option value="جديد">✅ جديد</option>
+            <option value="تخفيض">🔥 تخفيض</option>
+            <option value="العرض">⭐ العرض</option>
+            <option value="نفذ">❌ نفذ المخزون</option>
+          </select>
+        </div>
+        <div class="field form-full">
+          <label>وصف المنتج</label>
+          <textarea id="fDesc" placeholder="وصف مختصر للمنتج..."></textarea>
+        </div>
+      </div>
+
+      <!-- Sizes -->
+      <div class="field">
+        <label>المقاسات المتاحة</label>
+        <div class="sizes-wrap" id="sizesWrap">
+          <div class="size-chip" data-size="XS">XS</div>
+          <div class="size-chip" data-size="S">S</div>
+          <div class="size-chip" data-size="M">M</div>
+          <div class="size-chip" data-size="L">L</div>
+          <div class="size-chip" data-size="XL">XL</div>
+          <div class="size-chip" data-size="XXL">XXL</div>
+          <div class="size-chip" data-size="30ml">30ml</div>
+          <div class="size-chip" data-size="50ml">50ml</div>
+          <div class="size-chip" data-size="100ml">100ml</div>
+          <div class="size-chip" data-size="مقاس موحد">موحد</div>
+        </div>
+      </div>
+
+      <!-- Per-product free delivery -->
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">🚚 توصيل مجاني لهذا المنتج</div>
+          <div class="toggle-desc">شارة صفراء خاصة بهذا المنتج</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="fFD">
+          <div class="toggle-track"></div>
+        </label>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <button class="btn-add" style="flex:1" onclick="saveProduct()">💾 حفظ المنتج</button>
+        <button class="btn-outline" onclick="closeForm()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── Storage Keys ── */
+var K_PRODS = 'velora_products';
+var K_SETTINGS = 'velora_settings';
+var K_AUTH = 'velora_auth';
+
+/* ── Settings ── */
+function getSettings(){
+  try{ return JSON.parse(localStorage.getItem(K_SETTINGS)) || {}; }catch(e){ return {}; }
+}
+function saveSettings(s){
+  var cur = getSettings();
+  localStorage.setItem(K_SETTINGS, JSON.stringify(Object.assign(cur, s)));
+}
+function getSetting(k, def){
+  var s = getSettings(); return s[k] !== undefined ? s[k] : def;
+}
+
+/* ── Products ── */
+function getProds(){
+  try{ return JSON.parse(localStorage.getItem(K_PRODS)) || []; }catch(e){ return []; }
+}
+function saveProds(p){ localStorage.setItem(K_PRODS, JSON.stringify(p)); }
+
+/* ── Auth ── */
+function doLogin(){
+  var pwd = document.getElementById('pwdInp').value;
+  var stored = getSetting('password','123456');
+  if(pwd === stored){
+    sessionStorage.setItem(K_AUTH,'1');
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('app').classList.add('show');
+    initApp();
+  } else {
+    var err = document.getElementById('loginErr');
+    err.style.display='block';
+    document.getElementById('pwdInp').value='';
+    setTimeout(function(){ err.style.display='none'; }, 3000);
+  }
+}
+function logout(){
+  sessionStorage.removeItem(K_AUTH);
+  location.reload();
+}
+document.getElementById('pwdInp').addEventListener('keydown', function(e){
+  if(e.key==='Enter') doLogin();
+});
+
+/* ── Init ── */
+function initApp(){
+  // Nav
+  document.querySelectorAll('.nav-item').forEach(function(n){
+    n.addEventListener('click', function(){
+      document.querySelectorAll('.nav-item').forEach(function(x){ x.classList.remove('on'); });
+      document.querySelectorAll('.section').forEach(function(x){ x.classList.remove('on'); });
+      n.classList.add('on');
+      document.getElementById('sec-'+n.dataset.sec).classList.add('on');
+      if(n.dataset.sec==='products') renderProdList();
+      if(n.dataset.sec==='dashboard') renderDashboard();
+      if(n.dataset.sec==='delivery') renderDelivery();
+      if(n.dataset.sec==='settings') renderSettingsPage();
+    });
+  });
+  renderDashboard();
+  renderDelivery();
+  renderSettingsPage();
+}
+
+/* ── Dashboard ── */
+function renderDashboard(){
+  var prods = getProds();
+  var stats = document.getElementById('statsGrid');
+  var fd = getSetting('freeDelivery', false);
+  stats.innerHTML =
+    '<div class="stat-card"><div class="stat-num">'+prods.length+'</div><div class="stat-label">المنتجات</div></div>'+
+    '<div class="stat-card"><div class="stat-num">'+prods.filter(function(p){return p.tag==='جديد'}).length+'</div><div class="stat-label">منتجات جديدة</div></div>'+
+    '<div class="stat-card"><div class="stat-num">'+(fd?'🟡':'⚪')+'</div><div class="stat-label">توصيل مجاني</div></div>'+
+    '<div class="stat-card"><div class="stat-num">'+prods.filter(function(p){return p.freeDelivery||fd}).length+'</div><div class="stat-label">مع توصيل مجاني</div></div>';
+  var recent = document.getElementById('recentList');
+  if(!prods.length){ recent.innerHTML='<div class="empty-state"><div class="empty-icon">📦</div>لا توجد منتجات بعد</div>'; return; }
+  recent.innerHTML='<div style="font-size:13px;color:var(--muted);margin-bottom:10px;font-weight:600">آخر المنتجات المضافة</div>'+
+    '<div class="prod-list">'+prods.slice(-4).reverse().map(renderProdRow).join('')+'</div>';
+}
+
+/* ── Products List ── */
+function renderProdList(){
+  var prods = getProds();
+  document.getElementById('prodCount').textContent = prods.length + ' منتج';
+  var list = document.getElementById('prodList');
+  if(!prods.length){
+    list.innerHTML='<div class="empty-state"><div class="empty-icon">📦</div>لا توجد منتجات. أضف أول منتج!<br><br><button class="btn-add" onclick="openForm()" style="margin:0 auto">+ إضافة منتج</button></div>';
+    return;
+  }
+  list.innerHTML = prods.map(renderProdRow).join('');
+}
+function renderProdRow(p){
+  var img = (p.imgs && p.imgs[0]) ? p.imgs[0] : (p.img||'');
+  var fd = getSetting('freeDelivery',false);
+  return '<div class="prod-row">'+
+    '<img class="prod-thumb" src="'+img+'" onerror="this.src=\'\'">'+
+    '<div class="prod-info">'+
+      '<div class="prod-name">'+p.name+'</div>'+
+      '<div class="prod-meta">'+
+        '<span class="prod-tag tag-cat">'+p.cat+'</span>'+
+        (p.tag?'<span class="prod-tag tag-new">'+p.tag+'</span>':'')+
+        (p.freeDelivery||fd?'<span class="prod-tag tag-free">🚚 توصيل مجاني</span>':'')+
+      '</div>'+
+    '</div>'+
+    '<div class="prod-price">'+p.price+' د</div>'+
+    '<div class="prod-actions">'+
+      '<div class="act-btn" onclick="openForm(\''+p.id+'\')">✏️</div>'+
+      '<div class="act-btn del" onclick="deleteProd(\''+p.id+'\')">🗑️</div>'+
+    '</div>'+
+  '</div>';
+}
+
+function deleteProd(id){
+  if(!confirm('حذف هذا المنتج؟')) return;
+  var prods = getProds().filter(function(p){ return p.id !== id; });
+  saveProds(prods);
+  renderProdList();
+  renderDashboard();
+  toast('تم حذف المنتج');
+}
+
+/* ── Form State ── */
+var editId = null;
+var formImgs = [null,null,null,null];
+
+function openForm(id){
+  editId = id || null;
+  formImgs = [null,null,null,null];
+  document.getElementById('fName').value='';
+  document.getElementById('fPrice').value='';
+  document.getElementById('fOld').value='';
+  document.getElementById('fCat').value='مجوهرات';
+  document.getElementById('fTag').value='';
+  document.getElementById('fDesc').value='';
+  document.getElementById('imgUrl').value='';
+  document.getElementById('fFD').checked=false;
+  document.querySelectorAll('.size-chip').forEach(function(c){ c.classList.remove('on'); });
+  // Reset image slots
+  for(var i=0;i<4;i++) resetSlot(i);
+
+  if(id){
+    document.getElementById('formTitle').textContent='تعديل المنتج';
+    var p = getProds().find(function(x){ return x.id===id; });
+    if(!p) return;
+    document.getElementById('fName').value=p.name||'';
+    document.getElementById('fPrice').value=p.price||'';
+    document.getElementById('fOld').value=p.old||'';
+    document.getElementById('fCat').value=p.cat||'مجوهرات';
+    document.getElementById('fTag').value=p.tag||'';
+    document.getElementById('fDesc').value=p.desc||'';
+    document.getElementById('fFD').checked=!!p.freeDelivery;
+    if(p.sizes) p.sizes.forEach(function(s){
+      var chip = document.querySelector('.size-chip[data-size="'+s+'"]');
+      if(chip) chip.classList.add('on');
+    });
+    if(p.imgs) p.imgs.forEach(function(img,i){
+      if(img && i<4){ formImgs[i]=img; showSlotImg(i,img); }
+    });
+  } else {
+    document.getElementById('formTitle').textContent='إضافة منتج جديد';
+  }
+
+  document.getElementById('formOverlay').classList.add('show');
+}
+
+function closeForm(){
+  document.getElementById('formOverlay').classList.remove('show');
+  editId=null;
+}
+
+function trigImg(i){
+  document.querySelector('#slot'+i+' input[type=file]').click();
+}
+
+function loadImg(e, i){
+  var file = e.target.files[0];
+  if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev){
+    formImgs[i] = ev.target.result;
+    showSlotImg(i, ev.target.result);
+  };
+  reader.readAsDataURL(file);
+  e.target.value='';
+}
+
+function showSlotImg(i, src){
+  var slot = document.getElementById('slot'+i);
+  var existing = slot.querySelector('img');
+  if(existing) existing.remove();
+  var rm = slot.querySelector('.rm-img');
+  if(rm) rm.remove();
+  var img = document.createElement('img');
+  img.src = src;
+  slot.insertBefore(img, slot.firstChild);
+  var rmBtn = document.createElement('div');
+  rmBtn.className='rm-img'; rmBtn.textContent='✕';
+  rmBtn.onclick=function(e){ e.stopPropagation(); formImgs[i]=null; resetSlot(i); };
+  slot.insertBefore(rmBtn, slot.firstChild);
+  // Hide text
+  slot.querySelector('.slot-ico').style.display='none';
+  slot.querySelector('.slot-label').style.display='none';
+}
+
+function resetSlot(i){
+  var slot = document.getElementById('slot'+i);
+  var img = slot.querySelector('img'); if(img) img.remove();
+  var rm = slot.querySelector('.rm-img'); if(rm) rm.remove();
+  slot.querySelector('.slot-ico').style.display='';
+  slot.querySelector('.slot-label').style.display='';
+  formImgs[i]=null;
+}
+
+// Sizes
+document.querySelectorAll('.size-chip').forEach(function(c){
+  c.addEventListener('click', function(){ c.classList.toggle('on'); });
+});
+
+function saveProduct(){
+  var name = document.getElementById('fName').value.trim();
+  var price = parseFloat(document.getElementById('fPrice').value);
+  if(!name){ toast('أدخل اسم المنتج'); return; }
+  if(!price){ toast('أدخل السعر'); return; }
+
+  var imgs = formImgs.filter(Boolean);
+  var urlImg = document.getElementById('imgUrl').value.trim();
+  if(urlImg && !imgs.length) imgs = [urlImg];
+  if(!imgs.length){ toast('أضف صورة واحدة على الأقل'); return; }
+
+  var sizes = [];
+  document.querySelectorAll('.size-chip.on').forEach(function(c){ sizes.push(c.dataset.size); });
+
+  var prod = {
+    id: editId || ('p'+ Date.now()),
+    name: name,
+    cat: document.getElementById('fCat').value,
+    tag: document.getElementById('fTag').value,
+    price: price,
+    old: parseFloat(document.getElementById('fOld').value)||0,
+    desc: document.getElementById('fDesc').value.trim(),
+    sizes: sizes.length?sizes:['مقاس موحد'],
+    imgs: imgs,
+    img: imgs[0],
+    freeDelivery: document.getElementById('fFD').checked,
+  };
+
+  var prods = getProds();
+  if(editId){
+    prods = prods.map(function(p){ return p.id===editId ? prod : p; });
+    toast('✅ تم تحديث المنتج');
+  } else {
+    prods.push(prod);
+    toast('✅ تم إضافة المنتج');
+  }
+  saveProds(prods);
+  closeForm();
+  renderProdList();
+  renderDashboard();
+}
+
+/* ── Delivery ── */
+function renderDelivery(){
+  var s = getSettings();
+  document.getElementById('fdGlobal').checked = !!s.freeDelivery;
+  document.getElementById('fdText').value = s.freeDeliveryText || '🚚 توصيل مجاني';
+  updateFDPreview();
+}
+function saveFD(){
+  saveSettings({
+    freeDelivery: document.getElementById('fdGlobal').checked,
+    freeDeliveryText: document.getElementById('fdText').value
+  });
+  updateFDPreview();
+  renderDashboard();
+  toast('💾 تم الحفظ');
+}
+function updateFDPreview(){
+  var prev = document.getElementById('fdPreview');
+  var on = document.getElementById('fdGlobal').checked;
+  prev.style.display = on ? 'block' : 'none';
+  prev.textContent = document.getElementById('fdText').value || '🚚 توصيل مجاني';
+}
+
+/* ── Settings Page ── */
+function renderSettingsPage(){
+  var s = getSettings();
+  var waEl = document.getElementById('waNum');
+  if(waEl) waEl.value = s.whatsapp || '212778878421';
+}
+function changePwd(){
+  var cur = document.getElementById('curPwd').value;
+  var nw = document.getElementById('newPwd').value;
+  var conf = document.getElementById('confPwd').value;
+  var stored = getSetting('password','123456');
+  if(cur !== stored){ toast('❌ كلمة السر الحالية غير صحيحة'); return; }
+  if(!nw || nw.length < 4){ toast('❌ كلمة السر الجديدة قصيرة جداً'); return; }
+  if(nw !== conf){ toast('❌ كلمات السر لا تتطابق'); return; }
+  saveSettings({password: nw});
+  document.getElementById('curPwd').value='';
+  document.getElementById('newPwd').value='';
+  document.getElementById('confPwd').value='';
+  toast('✅ تم تغيير كلمة السر');
+}
+function saveWA(){
+  var wa = document.getElementById('waNum').value.trim();
+  saveSettings({whatsapp: wa});
+  toast('✅ تم حفظ رقم واتساب');
+}
+function exportData(){
+  var data = { products: getProds(), settings: getSettings() };
+  var blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'velora-backup.json';
+  a.click();
+}
+function clearAllProds(){
+  if(!confirm('⚠️ حذف جميع المنتجات؟ هذا الإجراء لا يمكن التراجع عنه!')) return;
+  saveProds([]);
+  renderProdList();
+  renderDashboard();
+  toast('تم حذف جميع المنتجات');
+}
+
+/* ── Toast ── */
+function toast(msg, dur){
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, dur||2800);
+}
+
+/* ── Boot ── */
+(function(){
+  if(sessionStorage.getItem(K_AUTH)==='1'){
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('app').classList.add('show');
+    initApp();
+  }
+})();
+</script>
+</body>
+</html>
