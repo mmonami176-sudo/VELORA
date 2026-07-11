@@ -115,5 +115,23 @@
     ],
     "img": "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783792605176-0.jpg",
     "freeDelivery": true
+  },
+  {
+    "id": "p1783801735806",
+    "name": "شامبو صبغة الشعر السريع لتغطية الشيب Prix",
+    "cat": "عناية",
+    "tag": "تخفيض",
+    "price": 199,
+    "old": 249,
+    "desc": "شامبو صبغة شعر السريعة جل أخضر بخلاصة الجرجير يغطي الشيب 100% شامبو أصلي من شركة koyo 420 ml",
+    "sizes": [
+      "مقاس موحد"
+    ],
+    "imgs": [
+      "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783801735806-0.jpg",
+      "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783801735806-1.jpg"
+    ],
+    "img": "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783801735806-0.jpg",
+    "freeDelivery": true
   }
 ]
