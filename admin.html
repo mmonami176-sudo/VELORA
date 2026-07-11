@@ -524,10 +524,15 @@ body{background:var(--black);color:var(--white);overflow-x:hidden}
           <div class="size-chip" data-size="L">L</div>
           <div class="size-chip" data-size="XL">XL</div>
           <div class="size-chip" data-size="XXL">XXL</div>
+          <div class="size-chip" data-size="XXXL">XXXL</div>
           <div class="size-chip" data-size="30ml">30ml</div>
           <div class="size-chip" data-size="50ml">50ml</div>
           <div class="size-chip" data-size="100ml">100ml</div>
           <div class="size-chip" data-size="مقاس موحد">موحد</div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <input type="text" id="customSizeInput" placeholder="مقاس مخصص (مثال: 40 أو 42)" style="flex:1;background:var(--black3);border:1px solid var(--border);color:var(--white);padding:9px 14px;border-radius:8px;font-family:var(--font);font-size:13px;outline:none">
+          <button type="button" id="addCustomSizeBtn" style="padding:9px 18px;border-radius:8px;border:1px solid var(--gold);color:var(--gold);background:transparent;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">+ إضافة مقاس</button>
         </div>
       </div>
 
@@ -864,8 +869,8 @@ function openForm(id){
     document.getElementById('fDesc').value=p.desc||'';
     document.getElementById('fFD').checked=!!p.freeDelivery;
     if(p.sizes) p.sizes.forEach(function(s){
-      var chip = document.querySelector('.size-chip[data-size="'+s+'"]');
-      if(chip) chip.classList.add('on');
+      var chip = ensureSizeChip(s);
+      chip.classList.add('on');
     });
     if(p.imgs) p.imgs.forEach(function(img,i){
       if(img && i<4){ formImgs[i]=img; showSlotImg(i,img); }
@@ -926,8 +931,34 @@ function resetSlot(i){
 }
 
 // Sizes
-document.querySelectorAll('.size-chip').forEach(function(c){
+function bindSizeChip(c){
   c.addEventListener('click', function(){ c.classList.toggle('on'); });
+}
+function ensureSizeChip(size){
+  var esc = String(size).replace(/"/g,'\\"');
+  var chip = document.querySelector('.size-chip[data-size="'+esc+'"]');
+  if(!chip){
+    chip = document.createElement('div');
+    chip.className = 'size-chip';
+    chip.dataset.size = size;
+    chip.textContent = size;
+    bindSizeChip(chip);
+    document.getElementById('sizesWrap').appendChild(chip);
+  }
+  return chip;
+}
+document.querySelectorAll('.size-chip').forEach(bindSizeChip);
+
+document.getElementById('addCustomSizeBtn').addEventListener('click', function(){
+  var input = document.getElementById('customSizeInput');
+  var val = input.value.trim();
+  if(!val){ toast('أدخل المقاس أولاً'); return; }
+  var chip = ensureSizeChip(val);
+  chip.classList.add('on');
+  input.value='';
+});
+document.getElementById('customSizeInput').addEventListener('keydown', function(e){
+  if(e.key === 'Enter'){ e.preventDefault(); document.getElementById('addCustomSizeBtn').click(); }
 });
 
 async function saveProduct(){
