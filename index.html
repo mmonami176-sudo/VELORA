@@ -482,35 +482,42 @@ async function fetchJSON(url){
 
 async function loadProducts(){
   var t = '?t=' + Date.now();
+  var loaded = false;
 
-  /* 1. GitHub Pages (نفس المستودع — أسرع وأحدث) */
-  try{
-    var data = await fetchJSON('https://mmonami176-sudo.github.io/VELORA/products.json' + t);
-    if(Array.isArray(data) && data.length){
-      PRODS = data;
-      try{ localStorage.setItem('velora_products', JSON.stringify(data)); }catch(e){}
-      renderProducts();
-      return;
-    }
-  }catch(e){}
+  /* 1. GitHub Pages */
+  if(!loaded){
+    try{
+      var d1 = await fetchJSON('https://mmonami176-sudo.github.io/VELORA/products.json' + t);
+      if(Array.isArray(d1) && d1.length){
+        PRODS = d1;
+        try{ localStorage.setItem('velora_products', JSON.stringify(d1)); }catch(_){}
+        loaded = true;
+      }
+    }catch(_){}
+  }
 
-  /* 2. raw.githubusercontent.com (احتياطي) */
-  try{
-    var data2 = await fetchJSON('https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/products.json' + t);
-    if(Array.isArray(data2) && data2.length){
-      PRODS = data2;
-      try{ localStorage.setItem('velora_products', JSON.stringify(data2)); }catch(e){}
-      renderProducts();
-      return;
-    }
-  }catch(e){}
+  /* 2. raw.githubusercontent.com */
+  if(!loaded){
+    try{
+      var d2 = await fetchJSON('https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/products.json' + t);
+      if(Array.isArray(d2) && d2.length){
+        PRODS = d2;
+        try{ localStorage.setItem('velora_products', JSON.stringify(d2)); }catch(_){}
+        loaded = true;
+      }
+    }catch(_){}
+  }
 
-  /* 3. cache محلي (نفس الجهاز) */
-  var adminProds = getAdminProds();
-  if(adminProds){ PRODS = adminProds; renderProducts(); return; }
+  /* 3. cache محلي */
+  if(!loaded){
+    var cached = getAdminProds();
+    if(cached){ PRODS = cached; loaded = true; }
+  }
 
-  /* 4. لا توجد منتجات بعد */
-  PRODS = [];
+  /* لو ما وُجد شيء */
+  if(!loaded) PRODS = [];
+
+  /* استدعاء واحد دائماً خارج أي try-catch */
   renderProducts();
 }
 
