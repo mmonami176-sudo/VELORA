@@ -59,5 +59,24 @@
     ],
     "img": "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783789068379-0.jpg",
     "freeDelivery": true
+  },
+  {
+    "id": "p1783789604517",
+    "name": "شهادة رقيقة",
+    "cat": "مجوهرات",
+    "tag": "تخفيض",
+    "price": 130,
+    "old": 199,
+    "desc": "Description\nمن نوع jh\n\nOptions du produit\nChoisir la taille\n\n4.7\n\n5.6\n\n6",
+    "sizes": [
+      "مقاس موحد"
+    ],
+    "imgs": [
+      "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783789604517-0.jpg",
+      "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783789604517-1.jpg",
+      "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783789604517-2.jpg"
+    ],
+    "img": "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783789604517-0.jpg",
+    "freeDelivery": true
   }
 ]
