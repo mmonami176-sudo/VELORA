@@ -78,5 +78,23 @@
     ],
     "img": "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783789604517-0.jpg",
     "freeDelivery": true
+  },
+  {
+    "id": "p1783792240375",
+    "name": "باك فوند قرى تي",
+    "cat": "ملابس",
+    "tag": "جديد",
+    "price": 279,
+    "old": 300,
+    "desc": "باك فوند كومبلي والبراسلي كادو من عندنا",
+    "sizes": [
+      "مقاس موحد"
+    ],
+    "imgs": [
+      "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783792240375-0.jpg",
+      "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783792240375-1.jpg"
+    ],
+    "img": "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783792240375-0.jpg",
+    "freeDelivery": true
   }
 ]
