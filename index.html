@@ -221,8 +221,6 @@ footer{background:var(--black2);border-top:1px solid var(--border);padding:40px 
 </head>
 <body>
 
-<!-- Announcement -->
-<div class="announce">🚚 توصيل مجاني للطلبات فوق 500 درهم &nbsp;|&nbsp; الدفع عند الاستلام &nbsp;|&nbsp; FREE DELIVERY +500 MAD</div>
 
 <!-- Header -->
 <header>
@@ -483,21 +481,25 @@ var favs = [];
 
 /* ── Fetch or use demo ── */
 async function loadProducts(){
-  try {
-    var endpoints = [
-      { url:'https://api.youcan.shop/catalog/products', h:{'Authorization':'Bearer '+API_TOKEN,'Accept':'application/json'} },
-    ];
-    for(var ep of endpoints){
-      try{
-        var r = await fetch(ep.url, {headers:ep.h, signal:AbortSignal.timeout(4000)});
-        if(r.ok){
-          var d = await r.json();
-          var arr = d.data || d.products || (Array.isArray(d)?d:[]);
-          if(arr.length > 0){ PRODS = arr.map(normalizeProduct); renderProducts(); return; }
-        }
-      }catch(e){}
-    }
-  }catch(e){}
+  var endpoints = [
+    { url:'https://bougha.youcan.shop/api/products', h:{'Authorization':'Bearer '+API_TOKEN,'Accept':'application/json'} },
+    { url:'https://api.youcan.shop/catalog/products', h:{'Authorization':'Bearer '+API_TOKEN,'Accept':'application/json'} },
+    { url:'https://api.youcan.shop/seller/products',  h:{'Authorization':'Bearer '+API_TOKEN,'Accept':'application/json'} },
+  ];
+  for(var ep of endpoints){
+    try{
+      var r = await fetch(ep.url, {headers:ep.h, signal:AbortSignal.timeout(5000)});
+      var text = await r.text();
+      /* متجر YouCan موقوف */
+      if(text.includes('"store is suspended"') || text.includes('suspended')) break;
+      if(r.ok){
+        var d = JSON.parse(text);
+        var arr = d.data || d.products || (Array.isArray(d)?d:[]);
+        if(arr.length > 0){ PRODS = arr.map(normalizeProduct); renderProducts(); return; }
+      }
+    }catch(e){}
+  }
+  /* الرجوع للمنتجات التجريبية */
   PRODS = DEMO;
   renderProducts();
 }
