@@ -103,19 +103,25 @@ nav a:hover{color:var(--gold)}
 .pc-img{position:relative;aspect-ratio:3/4;overflow:hidden}
 .pc-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
 .pc:hover .pc-img img{transform:scale(1.06)}
-.pc-badge{position:absolute;top:8px;right:8px;font-size:9px;font-weight:800;padding:3px 8px;letter-spacing:1px;text-transform:uppercase;border-radius:2px}
-.pc-new{background:var(--black);color:var(--gold);border:1px solid var(--gold)}
-.pc-fd{background:#f1c40f;color:#0a0a0a;box-shadow:0 2px 8px rgba(241,196,15,.4);right:auto;left:6px;top:6px;font-size:7px;padding:2px 5px;border-radius:3px;letter-spacing:.5px}
+.pc-badge{position:absolute;top:8px;right:8px;font-size:9px;font-weight:800;padding:4px 9px;letter-spacing:1px;text-transform:uppercase;border-radius:3px;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.pc-new{background:#16a34a;color:#fff;border:1px solid #16a34a}
+.pc-badge.tag-sale{background:#e5484d;color:#fff;border:1px solid #e5484d}
+.pc-badge.tag-offer{background:var(--gold);color:var(--black);border:1px solid var(--gold)}
+.pc-badge.tag-out{background:#2a2a2a;color:#999;border:1px solid #444}
+.pc-fd{position:absolute;bottom:8px;right:8px;top:auto;left:auto;background:rgba(10,10,10,.78);color:#facc15;border:1px solid rgba(250,204,21,.4);font-size:8px;font-weight:700;padding:3px 7px;border-radius:3px;letter-spacing:.3px;text-transform:none;backdrop-filter:blur(4px);box-shadow:none}
 .pc-overlay{position:absolute;inset:0;background:rgba(10,10,10,.55);display:flex;align-items:center;justify-content:center;opacity:0;transition:.2s}
 .pc:hover .pc-overlay{opacity:1}
 .pc-quick{background:var(--gold);color:var(--black);border:none;padding:9px 18px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:var(--font-ar);transition:.15s;border-radius:2px}
 .pc-quick:hover{background:var(--gold2)}
 .pc-body{padding:10px 10px 12px}
 .pc-cat{font-size:9px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px}
-.pc-name{font-size:12px;color:var(--white);font-weight:600;margin-bottom:6px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.pc-price-row{display:flex;align-items:center;justify-content:space-between}
-.pc-price{font-family:var(--font-en);font-size:15px;color:var(--gold);font-weight:600}
-.pc-price-old{font-size:11px;color:var(--muted);text-decoration:line-through;margin-right:4px}
+.pc-name{font-size:12px;color:var(--white);font-weight:600;margin-bottom:8px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pc-price-row{display:flex;align-items:flex-end;justify-content:space-between;gap:8px}
+.pc-price-block{display:flex;flex-direction:column;gap:2px;min-width:0}
+.pc-price-old-row{display:flex;align-items:center;gap:6px}
+.pc-price{font-family:var(--font-en);font-size:16px;color:var(--gold);font-weight:700;white-space:nowrap}
+.pc-price-old{font-size:10px;color:var(--muted);text-decoration:line-through;white-space:nowrap}
+.pc-disc{font-size:9px;font-weight:800;color:#ff6b6b;background:rgba(229,72,77,.14);padding:1px 5px;border-radius:3px;white-space:nowrap}
 .pc-fav{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:2px;transition:.2s;flex-shrink:0}
 .pc-fav.on{color:var(--gold)}
 
@@ -137,6 +143,7 @@ nav a:hover{color:var(--gold)}
 .modal-price-row{display:flex;align-items:center;gap:10px}
 .modal-price{font-family:var(--font-en);font-size:26px;color:var(--gold);font-weight:600}
 .modal-old{font-size:16px;color:var(--muted);text-decoration:line-through}
+.modal-disc{font-size:11px;font-weight:800;color:#ff6b6b;background:rgba(229,72,77,.14);padding:3px 8px;border-radius:4px}
 .modal-desc{font-size:13px;color:var(--muted);line-height:1.8;padding-top:6px;border-top:1px solid var(--border)}
 .size-label{font-size:11px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
 .sizes{display:flex;gap:8px;flex-wrap:wrap}
@@ -388,6 +395,7 @@ footer{background:var(--black2);border-top:1px solid var(--border);padding:40px 
       <div class="modal-price-row">
         <div class="modal-price"><span id="mPrice"></span> درهم</div>
         <div class="modal-old" id="mOld"></div>
+        <div class="modal-disc" id="mDisc"></div>
       </div>
       <div class="modal-desc" id="mDesc"></div>
       <div id="sizeSection">
@@ -568,19 +576,22 @@ function renderProducts(){
     var fav = favs.indexOf(p.id) > -1;
     var mainImg = (p.imgs && p.imgs[0]) ? p.imgs[0] : (p.img || '');
     var showFD = globalFD || p.freeDelivery;
+    var tagClass = { 'جديد':'', 'تخفيض':'tag-sale', 'العرض':'tag-offer', 'نفذ':'tag-out' }[p.tag] || '';
+    var hasOld = p.old && p.old > p.price;
+    var discPct = hasOld ? Math.round((1 - p.price/p.old) * 100) : 0;
     return '<div class="pc" data-id="'+p.id+'">'+
       '<div class="pc-img">'+
         '<img src="'+mainImg+'" alt="'+p.name+'" loading="lazy" onerror="this.src=\'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&fit=crop\'">'+
+        (p.tag?'<div class="pc-badge pc-new '+tagClass+'">'+p.tag+'</div>':'')+
         (showFD?'<div class="pc-badge pc-fd">'+fdText+'</div>':'')+
-        (p.tag?'<div class="pc-badge pc-new">'+p.tag+'</div>':'')+
         '<div class="pc-overlay"><button class="pc-quick" data-id="'+p.id+'">تفاصيل</button></div>'+
       '</div>'+
       '<div class="pc-body">'+
         '<div class="pc-cat">'+p.cat+'</div>'+
         '<div class="pc-name">'+p.name+'</div>'+
         '<div class="pc-price-row">'+
-          '<div>'+
-            (p.old?'<span class="pc-price-old">'+p.old+' د</span>':'')+
+          '<div class="pc-price-block">'+
+            (hasOld?'<div class="pc-price-old-row"><span class="pc-price-old">'+p.old+' د</span><span class="pc-disc">-'+discPct+'%</span></div>':'')+
             '<span class="pc-price">'+p.price+' درهم</span>'+
           '</div>'+
           '<button class="pc-fav'+(fav?' on':'')+'" data-fav="'+p.id+'">♡</button>'+
@@ -661,7 +672,10 @@ function openModal(id){
   document.getElementById('mName').textContent = p.name;
   document.getElementById('mPrice').textContent = p.price;
   var oldEl = document.getElementById('mOld');
-  oldEl.textContent = p.old ? p.old+' درهم' : '';
+  var discEl = document.getElementById('mDisc');
+  var hasOld = p.old && p.old > p.price;
+  oldEl.textContent = hasOld ? p.old+' درهم' : '';
+  discEl.textContent = hasOld ? '-'+Math.round((1 - p.price/p.old) * 100)+'%' : '';
   document.getElementById('mDesc').textContent = p.desc||'';
 
   var szSec = document.getElementById('sizeSection');
