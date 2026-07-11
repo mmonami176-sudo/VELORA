@@ -287,6 +287,7 @@ footer{background:var(--black2);border-top:1px solid var(--border);padding:40px 
 
   <div class="cats">
     <button class="cat-btn on" data-cat="الكل">الكل</button>
+    <button class="cat-btn" data-cat="مجوهرات">💛 مجوهرات</button>
     <button class="cat-btn" data-cat="ملابس">👗 ملابس</button>
     <button class="cat-btn" data-cat="عطور">🌸 عطور</button>
     <button class="cat-btn" data-cat="جديد">✨ الجديد</button>
@@ -438,36 +439,9 @@ var API_TOKEN = 'BOUGHA_xUisHlSBPbxIjqRunJGyeMgP2ZU9jq4H';
 
 /* ── Demo Products ── */
 var DEMO = [
-  {id:'c1',name:'قميص فاخر بيج كريمي',nameEn:'Beige Luxury Shirt',cat:'ملابس',tag:'جديد',price:349,old:499,
-   img:'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=600&fit=crop',
-   sizes:['S','M','L','XL','XXL'],desc:'قميص رجالي فاخر من قماش عالي الجودة، مثالي للمناسبات والأوقات اليومية الراقية.'},
-  {id:'c2',name:'عباءة سوداء أنيقة',nameEn:'Black Elegant Abaya',cat:'ملابس',tag:'جديد',price:599,old:799,
-   img:'https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?w=600&fit=crop',
-   sizes:['S','M','L','XL'],desc:'عباءة نسائية أنيقة بتصميم عصري، تجمع بين الأصالة والحداثة، من أجود أنواع القماش.'},
-  {id:'p1',name:'عطر NOIR ROYAL',nameEn:'NOIR ROYAL Perfume',cat:'عطور',tag:'',price:399,old:0,
-   img:'https://images.unsplash.com/photo-1592945403407-3d8f0f49e2e8?w=600&fit=crop',
-   sizes:['50ml','100ml'],desc:'عطر رجالي فاخر بعبق خشب العود والمسك، يدوم أكثر من 12 ساعة. تجربة حسية لا تُنسى.'},
-  {id:'c3',name:'بدلة رجالية كلاسيكية',nameEn:'Classic Men\'s Suit',cat:'ملابس',tag:'',price:899,old:1199,
-   img:'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&fit=crop',
-   sizes:['M','L','XL','XXL'],desc:'بدلة رجالية كلاسيكية بتصميم إيطالي، مثالية للمناسبات الرسمية والاجتماعات المهمة.'},
-  {id:'p2',name:'عطر VELORA ROSE',nameEn:'VELORA ROSE Perfume',cat:'عطور',tag:'جديد',price:449,old:0,
-   img:'https://images.unsplash.com/photo-1541643600914-78b084683702?w=600&fit=crop',
-   sizes:['30ml','50ml','100ml'],desc:'عطر نسائي فريد بعبق الورد الطائفي والياسمين، خفيف وعذب، مثالي للاستخدام اليومي.'},
-  {id:'c4',name:'فستان سهرة ذهبي',nameEn:'Golden Evening Dress',cat:'ملابس',tag:'جديد',price:749,old:999,
-   img:'https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=600&fit=crop',
-   sizes:['XS','S','M','L'],desc:'فستان سهرة فاخر بلمسات ذهبية، يمنحك أناقة ملكية في المناسبات الخاصة والحفلات.'},
-  {id:'p3',name:'عطر OUD MAROCAIN',nameEn:'OUD MAROCAIN Perfume',cat:'عطور',tag:'',price:699,old:899,
-   img:'https://images.unsplash.com/photo-1619994403073-2cec844b8e63?w=600&fit=crop',
-   sizes:['50ml','100ml','200ml'],desc:'عطر شرقي أصيل بعبق العود المغربي الطبيعي، يعكس أصالة وعمق الثقافة المغربية.'},
-  {id:'c5',name:'جلابة رجالية فاخرة',nameEn:'Luxury Men\'s Djellaba',cat:'ملابس',tag:'',price:499,old:699,
-   img:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&fit=crop',
-   sizes:['M','L','XL','XXL'],desc:'جلابة رجالية مغربية فاخرة بتطريز يدوي، تجمع بين التراث الأصيل والذوق الرفيع.'},
-  {id:'p4',name:'عطر AMBRE D\'OR',nameEn:'AMBRE D\'OR Perfume',cat:'عطور',tag:'',price:349,old:0,
-   img:'https://images.unsplash.com/photo-1587017539504-67cfbddac569?w=600&fit=crop',
-   sizes:['50ml','100ml'],desc:'عطر فريد يمزج بين العنبر الذهبي والخزامى والبرغموت، يناسب جميع المواسم.'},
-  {id:'c6',name:'تيشيرت VELORA Luxury',nameEn:'VELORA Luxury T-Shirt',cat:'ملابس',tag:'جديد',price:249,old:349,
-   img:'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=600&fit=crop',
-   sizes:['S','M','L','XL','XXL'],desc:'تيشيرت فاخر بشعار VELORA المطرز، من قماش قطن مصري ناعم وعالي الجودة.'},
+  {id:'b1',name:'طقم مجوهرات ذهبي رادكو',nameEn:'Radko Gold Jewelry Set',cat:'مجوهرات',tag:'جديد',price:199,old:0,
+   img:'/velora/imgs/product-1.jpg',
+   sizes:['مقاس موحد'],desc:'طقم مجوهرات ذهبي فاخر يتضمن سلسلة، سوار، خاتم وأقراط — من أجود أنواع المعادن المطلية بالذهب، مثالي للإهداء والمناسبات.'},
 ];
 
 /* ── State ── */
