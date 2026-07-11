@@ -515,6 +515,20 @@ var K_PRODS = 'velora_products';
 var K_SETTINGS = 'velora_settings';
 var K_AUTH = 'velora_auth';
 
+/* ── Password Hashing (SHA-256 via WebCrypto) ── */
+async function hashPwd(pwd){
+  var enc = new TextEncoder().encode(pwd);
+  var buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf))
+    .map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+}
+function genToken(){
+  if(crypto.randomUUID) return crypto.randomUUID();
+  var arr = new Uint8Array(24);
+  crypto.getRandomValues(arr);
+  return Array.from(arr).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+}
+
 /* ── Settings ── */
 function getSettings(){
   try{ return JSON.parse(localStorage.getItem(K_SETTINGS)) || {}; }catch(e){ return {}; }
@@ -534,11 +548,23 @@ function getProds(){
 function saveProds(p){ localStorage.setItem(K_PRODS, JSON.stringify(p)); }
 
 /* ── Auth ── */
-function doLogin(){
+async function doLogin(){
   var pwd = document.getElementById('pwdInp').value;
-  var stored = getSetting('password','123456');
-  if(pwd === stored){
-    sessionStorage.setItem(K_AUTH,'1');
+  if(!pwd){ return; }
+
+  /* اقرأ كلمة المرور المخزّنة (هاش أو نص قديم للهجرة) */
+  var stored = getSetting('password','');
+
+  /* هجرة: إذا لم تكن مخزّنة أو كانت نصاً عادياً → احفظ هاش الافتراضي */
+  if(!stored || stored.length !== 64){
+    stored = await hashPwd('123456');
+    saveSettings({password: stored});
+  }
+
+  var inputHash = await hashPwd(pwd);
+  if(inputHash === stored){
+    var token = genToken();
+    sessionStorage.setItem(K_AUTH, token);
     document.getElementById('loginScreen').style.display='none';
     document.getElementById('app').classList.add('show');
     initApp();
@@ -802,15 +828,24 @@ function renderSettingsPage(){
   var waEl = document.getElementById('waNum');
   if(waEl) waEl.value = s.whatsapp || '212778878421';
 }
-function changePwd(){
+async function changePwd(){
   var cur = document.getElementById('curPwd').value;
   var nw = document.getElementById('newPwd').value;
   var conf = document.getElementById('confPwd').value;
-  var stored = getSetting('password','123456');
-  if(cur !== stored){ toast('❌ كلمة السر الحالية غير صحيحة'); return; }
-  if(!nw || nw.length < 4){ toast('❌ كلمة السر الجديدة قصيرة جداً'); return; }
+  var stored = getSetting('password','');
+
+  /* هجرة: إذا لم يكن هاشاً بعد */
+  if(!stored || stored.length !== 64){
+    stored = await hashPwd('123456');
+    saveSettings({password: stored});
+  }
+
+  var curHash = await hashPwd(cur);
+  if(curHash !== stored){ toast('❌ كلمة السر الحالية غير صحيحة'); return; }
+  if(!nw || nw.length < 6){ toast('❌ كلمة السر الجديدة قصيرة جداً (6 أحرف على الأقل)'); return; }
   if(nw !== conf){ toast('❌ كلمات السر لا تتطابق'); return; }
-  saveSettings({password: nw});
+  var newHash = await hashPwd(nw);
+  saveSettings({password: newHash});
   document.getElementById('curPwd').value='';
   document.getElementById('newPwd').value='';
   document.getElementById('confPwd').value='';
@@ -847,10 +882,15 @@ function toast(msg, dur){
 
 /* ── Boot ── */
 (function(){
-  if(sessionStorage.getItem(K_AUTH)==='1'){
+  var token = sessionStorage.getItem(K_AUTH);
+  /* تحقق أن الجلسة موجودة وليست القيمة القديمة '1' */
+  if(token && token.length > 8 && token !== '1'){
     document.getElementById('loginScreen').style.display='none';
     document.getElementById('app').classList.add('show');
     initApp();
+  } else {
+    /* امسح أي جلسة قديمة أو مزيّفة */
+    sessionStorage.removeItem(K_AUTH);
   }
 })();
 </script>
