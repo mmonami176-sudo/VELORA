@@ -40,5 +40,24 @@
     ],
     "img": "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783786399899-0.jpg",
     "freeDelivery": true
+  },
+  {
+    "id": "p1783789068379",
+    "name": "collie ananas",
+    "cat": "مجوهرات",
+    "tag": "جديد",
+    "price": 199,
+    "old": 240,
+    "desc": "jh براسلي ستوندار 6cm والخاتم متوفر في المقاس 7/8/9",
+    "sizes": [
+      "مقاس موحد"
+    ],
+    "imgs": [
+      "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783789068379-0.jpg",
+      "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783789068379-1.jpg",
+      "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783789068379-2.jpg"
+    ],
+    "img": "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783789068379-0.jpg",
+    "freeDelivery": false
   }
 ]
