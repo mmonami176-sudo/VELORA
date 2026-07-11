@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VELORA — Clothing & Perfumes</title>
+<meta name="description" content="VELORA — متجر الأزياء والعطور الفاخرة في المغرب">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── Variables ── */
+:root{
+  --black:#0a0a0a; --black2:#111; --black3:#1a1a1a; --black4:#222;
+  --gold:#c9a84c; --gold2:#d4af37; --gold3:#b8961e; --gold-light:#e8d08a;
+  --white:#ffffff; --off-white:#f8f5f0; --muted:#888; --border:rgba(201,168,76,.2);
+  --font-ar:'Cairo',sans-serif; --font-en:'Cormorant Garamond',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--white);font-family:var(--font-ar);overflow-x:hidden}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--black2)}
+::-webkit-scrollbar-thumb{background:var(--gold3);border-radius:2px}
+
+/* ── Announcement Bar ── */
+.announce{background:var(--gold);color:var(--black);text-align:center;padding:9px 14px;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+
+/* ── Header ── */
+header{position:sticky;top:0;z-index:100;background:var(--black);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:72px}
+.logo-wrap{display:flex;align-items:center;gap:12px;text-decoration:none}
+.logo-img{width:54px;height:54px;object-fit:contain}
+.logo-text{display:flex;flex-direction:column;line-height:1.1}
+.logo-text .v-name{font-family:var(--font-en);font-size:22px;font-weight:600;color:var(--gold);letter-spacing:4px}
+.logo-text .v-sub{font-size:8px;color:var(--muted);letter-spacing:2.5px;text-transform:uppercase}
+nav{display:flex;gap:24px}
+nav a{color:var(--muted);text-decoration:none;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;transition:color .2s}
+nav a:hover{color:var(--gold)}
+.hdr-actions{display:flex;align-items:center;gap:10px}
+.cart-btn{position:relative;background:none;border:1px solid var(--border);color:var(--gold);cursor:pointer;border-radius:8px;padding:8px 16px;font-size:13px;display:flex;align-items:center;gap:6px;transition:.2s;font-family:var(--font-ar)}
+.cart-btn:hover{background:var(--gold);color:var(--black)}
+.cart-count{background:var(--gold);color:var(--black);border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800}
+.burger{display:none;background:none;border:none;color:var(--gold);font-size:22px;cursor:pointer}
+
+/* ── Hero ── */
+.hero{position:relative;height:85vh;min-height:520px;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;background:var(--black)}
+.hero-bg{position:absolute;inset:0;background:
+  linear-gradient(135deg,rgba(10,10,10,.95) 0%,rgba(26,18,6,.9) 50%,rgba(10,10,10,.95) 100%),
+  url('https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1400&fit=crop') center/cover no-repeat}
+.hero-gold-line{position:absolute;top:0;left:50%;transform:translateX(-50%);width:1px;height:100%;background:linear-gradient(to bottom,transparent,var(--gold),transparent);opacity:.3}
+.hero-content{position:relative;z-index:2;padding:20px}
+.hero-badge{display:inline-block;border:1px solid var(--gold);color:var(--gold);font-size:10px;letter-spacing:3px;text-transform:uppercase;padding:6px 20px;margin-bottom:24px;font-family:var(--font-en)}
+.hero h1{font-family:var(--font-en);font-size:clamp(48px,8vw,90px);font-weight:400;color:var(--gold);letter-spacing:8px;text-transform:uppercase;line-height:1;margin-bottom:8px}
+.hero-sub{font-family:var(--font-en);font-size:clamp(13px,2vw,16px);color:var(--muted);letter-spacing:4px;text-transform:uppercase;margin-bottom:30px}
+.hero-ar{font-size:clamp(15px,2.5vw,20px);color:var(--off-white);margin-bottom:36px;font-weight:300;line-height:1.7}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn-primary{background:var(--gold);color:var(--black);border:none;padding:14px 36px;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-weight:700;transition:.2s;font-family:var(--font-ar)}
+.btn-primary:hover{background:var(--gold2)}
+.btn-outline{background:transparent;color:var(--gold);border:1px solid var(--gold);padding:14px 36px;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:.2s;font-family:var(--font-ar)}
+.btn-outline:hover{background:var(--gold);color:var(--black)}
+
+/* ── Stats ── */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);background:var(--black2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.stat{padding:22px 14px;text-align:center;border-left:1px solid var(--border)}
+.stat:last-child{border-left:none}
+.stat-num{font-family:var(--font-en);font-size:28px;color:var(--gold);font-weight:600}
+.stat-label{font-size:11px;color:var(--muted);letter-spacing:1px;margin-top:4px}
+
+/* ── Section ── */
+.section{padding:60px 20px}
+.sec-title{text-align:center;margin-bottom:40px}
+.sec-title .s-en{font-family:var(--font-en);font-size:11px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:8px}
+.sec-title h2{font-family:var(--font-en);font-size:clamp(28px,4vw,42px);color:var(--white);font-weight:400;letter-spacing:2px}
+.sec-title .gold-line{width:60px;height:1px;background:var(--gold);margin:14px auto 0}
+
+/* ── Categories ── */
+.cats{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:36px}
+.cat-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:9px 22px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:.2s;font-family:var(--font-ar)}
+.cat-btn.on{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.08)}
+.cat-btn:hover:not(.on){border-color:var(--gold3);color:var(--gold3)}
+
+/* ── Products Grid ── */
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px;max-width:1200px;margin:0 auto}
+
+/* ── Product Card ── */
+.pc{background:var(--black2);border:1px solid var(--border);cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.pc:hover{border-color:var(--gold);transform:translateY(-3px)}
+.pc-img{position:relative;aspect-ratio:3/4;overflow:hidden}
+.pc-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.pc:hover .pc-img img{transform:scale(1.05)}
+.pc-badge{position:absolute;top:12px;right:12px;background:var(--gold);color:var(--black);font-size:10px;font-weight:800;padding:4px 10px;letter-spacing:1px;text-transform:uppercase}
+.pc-new{background:var(--black);color:var(--gold);border:1px solid var(--gold)}
+.pc-overlay{position:absolute;inset:0;background:rgba(10,10,10,.6);display:flex;align-items:center;justify-content:center;opacity:0;transition:.2s}
+.pc:hover .pc-overlay{opacity:1}
+.pc-quick{background:var(--gold);color:var(--black);border:none;padding:11px 24px;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;font-family:var(--font-ar);transition:.15s}
+.pc-quick:hover{background:var(--gold2)}
+.pc-body{padding:14px 14px 18px}
+.pc-cat{font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:5px}
+.pc-name{font-size:14px;color:var(--white);font-weight:600;margin-bottom:8px;line-height:1.4}
+.pc-price-row{display:flex;align-items:center;justify-content:space-between}
+.pc-price{font-family:var(--font-en);font-size:18px;color:var(--gold);font-weight:600}
+.pc-price-old{font-size:13px;color:var(--muted);text-decoration:line-through;margin-right:6px}
+.pc-fav{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:2px;transition:.2s}
+.pc-fav.on{color:var(--gold)}
+
+/* ── Product Modal ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;overflow-y:auto;padding:20px}
+.modal-bg.open{display:flex;align-items:center;justify-content:center}
+.modal{background:var(--black2);border:1px solid var(--border);max-width:820px;width:100%;margin:auto;display:grid;grid-template-columns:1fr 1fr;position:relative}
+.modal-close{position:absolute;top:14px;left:14px;background:none;border:none;color:var(--muted);font-size:24px;cursor:pointer;line-height:1;z-index:10;transition:color .2s}
+.modal-close:hover{color:var(--gold)}
+.modal-img{aspect-ratio:3/4;overflow:hidden}
+.modal-img img{width:100%;height:100%;object-fit:cover}
+.modal-info{padding:30px 24px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;max-height:80vh}
+.modal-cat{font-size:10px;color:var(--gold);letter-spacing:3px;text-transform:uppercase}
+.modal-name{font-family:var(--font-en);font-size:clamp(20px,3vw,28px);color:var(--white);font-weight:400;line-height:1.3}
+.modal-price-row{display:flex;align-items:center;gap:10px}
+.modal-price{font-family:var(--font-en);font-size:26px;color:var(--gold);font-weight:600}
+.modal-old{font-size:16px;color:var(--muted);text-decoration:line-through}
+.modal-desc{font-size:13px;color:var(--muted);line-height:1.8;padding-top:6px;border-top:1px solid var(--border)}
+.size-label{font-size:11px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.sizes{display:flex;gap:8px;flex-wrap:wrap}
+.sz{background:none;border:1px solid var(--border);color:var(--muted);width:42px;height:42px;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;transition:.15s}
+.sz.on{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.1)}
+.sz:hover:not(.on){border-color:var(--gold3);color:var(--gold3)}
+.qty-row{display:flex;align-items:center;gap:12px}
+.qty-label{font-size:11px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
+.qty-ctrl{display:flex;align-items:center;gap:0;border:1px solid var(--border)}
+.qty-ctrl button{background:none;border:none;color:var(--gold);width:36px;height:36px;cursor:pointer;font-size:18px;transition:.15s}
+.qty-ctrl button:hover{background:rgba(201,168,76,.1)}
+.qty-val{width:40px;text-align:center;font-size:15px;color:var(--white);pointer-events:none}
+.add-cart-btn{background:var(--gold);color:var(--black);border:none;padding:14px;font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;cursor:pointer;width:100%;transition:.2s;font-family:var(--font-ar)}
+.add-cart-btn:hover{background:var(--gold2)}
+
+/* ── Cart Sidebar ── */
+.cart-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200}
+.cart-overlay.open{display:block}
+.cart-side{position:fixed;left:0;top:0;bottom:0;width:min(400px,100vw);background:var(--black2);border-right:1px solid var(--border);z-index:201;display:flex;flex-direction:column;transform:translateX(-100%);transition:transform .3s}
+.cart-side.open{transform:translateX(0)}
+.cart-hdr{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid var(--border)}
+.cart-hdr h3{font-family:var(--font-en);font-size:18px;color:var(--gold);letter-spacing:2px}
+.cart-x{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer}
+.cart-items{flex:1;overflow-y:auto;padding:14px}
+.cart-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:200px;color:var(--muted);gap:10px;text-align:center}
+.cart-empty span{font-size:40px}
+.ci{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--border)}
+.ci-img{width:70px;height:90px;object-fit:cover;flex-shrink:0}
+.ci-info{flex:1}
+.ci-name{font-size:13px;color:var(--white);margin-bottom:4px;line-height:1.4}
+.ci-meta{font-size:11px;color:var(--muted);margin-bottom:6px}
+.ci-price{font-family:var(--font-en);color:var(--gold);font-size:15px;font-weight:600}
+.ci-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;margin-top:4px;transition:color .15s;display:block}
+.ci-del:hover{color:#e55}
+.cart-foot{padding:20px;border-top:1px solid var(--border)}
+.cart-total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.cart-total-label{color:var(--muted);font-size:13px;letter-spacing:1px}
+.cart-total-val{font-family:var(--font-en);color:var(--gold);font-size:22px;font-weight:600}
+.wa-btn{width:100%;background:#25D366;color:#fff;border:none;padding:15px;font-size:14px;font-weight:800;letter-spacing:1.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;font-family:var(--font-ar);transition:.2s}
+.wa-btn:hover{background:#1ebc59}
+.wa-icon{width:22px;height:22px}
+
+/* ── Order Modal ── */
+.order-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:400;align-items:center;justify-content:center;padding:20px}
+.order-bg.open{display:flex}
+.order-box{background:var(--black2);border:1px solid var(--border);max-width:480px;width:100%;padding:32px 28px;position:relative}
+.order-box h3{font-family:var(--font-en);font-size:22px;color:var(--gold);letter-spacing:2px;margin-bottom:6px}
+.order-sub{font-size:12px;color:var(--muted);margin-bottom:22px;line-height:1.6}
+.of{margin-bottom:14px}
+.of label{display:block;font-size:11px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+.of input,.of select{width:100%;background:var(--black3);border:1px solid var(--border);color:var(--white);padding:11px 14px;font-size:14px;outline:none;font-family:var(--font-ar);transition:border .2s}
+.of input:focus,.of select:focus{border-color:var(--gold)}
+.of select option{background:var(--black2)}
+.of-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.send-wa-btn{width:100%;background:#25D366;color:#fff;border:none;padding:14px;font-size:14px;font-weight:800;letter-spacing:1.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;font-family:var(--font-ar);margin-top:20px;transition:.2s}
+.send-wa-btn:hover{background:#1ebc59}
+.order-close{position:absolute;top:14px;left:14px;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer}
+
+/* ── Features ── */
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--border);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.feat{background:var(--black);padding:28px 20px;text-align:center}
+.feat-icon{font-size:28px;margin-bottom:10px}
+.feat-title{font-size:13px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+.feat-desc{font-size:12px;color:var(--muted);line-height:1.6}
+
+/* ── Footer ── */
+footer{background:var(--black2);border-top:1px solid var(--border);padding:40px 20px;text-align:center}
+.footer-logo{font-family:var(--font-en);font-size:32px;color:var(--gold);letter-spacing:6px;margin-bottom:8px}
+.footer-tag{font-size:11px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:20px}
+.footer-links{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin-bottom:20px}
+.footer-links a{color:var(--muted);text-decoration:none;font-size:12px;letter-spacing:1px;transition:color .2s}
+.footer-links a:hover{color:var(--gold)}
+.footer-copy{font-size:11px;color:rgba(136,136,136,.5)}
+.wa-float{position:fixed;bottom:24px;right:24px;z-index:150;background:#25D366;color:#fff;border:none;width:56px;height:56px;border-radius:50%;font-size:26px;cursor:pointer;box-shadow:0 4px 20px rgba(37,211,102,.4);display:flex;align-items:center;justify-content:center;transition:.2s;text-decoration:none}
+.wa-float:hover{background:#1ebc59;transform:scale(1.1)}
+
+/* ── Loading ── */
+.loading-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px;max-width:1200px;margin:0 auto}
+.pc-skel{background:var(--black2);border:1px solid var(--border);height:380px;animation:shimmer 1.5s infinite linear;background:linear-gradient(90deg,var(--black2) 25%,var(--black3) 50%,var(--black2) 75%);background-size:200%}
+@keyframes shimmer{to{background-position:-200% 0}}
+
+/* ── Toast ── */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--black);padding:10px 22px;font-size:13px;font-weight:700;z-index:999;animation:tf 2.5s forwards;white-space:nowrap;pointer-events:none}
+@keyframes tf{0%{opacity:0;transform:translateX(-50%) translateY(8px)}12%{opacity:1;transform:translateX(-50%)}80%{opacity:1}100%{opacity:0}}
+
+/* ── Responsive ── */
+@media(max-width:768px){
+  nav{display:none}
+  .hero{height:70vh}
+  .modal{grid-template-columns:1fr}
+  .modal-img{aspect-ratio:4/3}
+  .products-grid{grid-template-columns:repeat(2,1fr);gap:12px}
+}
+@media(max-width:420px){
+  .products-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .stats{grid-template-columns:1fr}
+  .stat{border-left:none;border-bottom:1px solid var(--border)}
+}
+</style>
+</head>
+<body>
+
+<!-- Announcement -->
+<div class="announce">🚚 توصيل مجاني للطلبات فوق 500 درهم &nbsp;|&nbsp; الدفع عند الاستلام &nbsp;|&nbsp; FREE DELIVERY +500 MAD</div>
+
+<!-- Header -->
+<header>
+  <button class="burger" id="menuBurger">☰</button>
+  <nav>
+    <a href="#home">الرئيسية</a>
+    <a href="#products">المنتجات</a>
+    <a href="#about">عن VELORA</a>
+  </nav>
+  <a href="#home" class="logo-wrap" id="topLogo">
+    <img src="/velora-logo.png" alt="VELORA Logo" class="logo-img">
+    <div class="logo-text">
+      <span class="v-name">VELORA</span>
+      <span class="v-sub">Clothing & Perfumes</span>
+    </div>
+  </a>
+  <div class="hdr-actions">
+    <button class="cart-btn" id="cartBtn">
+      🛍 سلة الشراء
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-gold-line"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Collection 2025 — New Arrivals</div>
+    <h1>VELORA</h1>
+    <div class="hero-sub">Clothing & Perfumes ✦ Morocco</div>
+    <div class="hero-ar">أناقة لا مثيل لها — عطور فاخرة وأزياء راقية<br>مصممة لمن يعشق التميّز</div>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">تسوق الآن</button>
+      <button class="btn-outline" onclick="setFilter('عطور');document.getElementById('products').scrollIntoView({behavior:'smooth'})">العطور</button>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<div class="stats">
+  <div class="stat">
+    <div class="stat-num">+2K</div>
+    <div class="stat-label">عميل سعيد</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">100%</div>
+    <div class="stat-label">أصلي ومضمون</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">24H</div>
+    <div class="stat-label">توصيل سريع</div>
+  </div>
+</div>
+
+<!-- Products -->
+<section class="section" id="products">
+  <div class="sec-title">
+    <span class="s-en">Our Collections</span>
+    <h2>تشكيلتنا الحصرية</h2>
+    <div class="gold-line"></div>
+  </div>
+
+  <div class="cats">
+    <button class="cat-btn on" data-cat="الكل">الكل</button>
+    <button class="cat-btn" data-cat="ملابس">👗 ملابس</button>
+    <button class="cat-btn" data-cat="عطور">🌸 عطور</button>
+    <button class="cat-btn" data-cat="جديد">✨ الجديد</button>
+  </div>
+
+  <div id="prodContainer">
+    <div class="loading-grid" id="loadingGrid">
+      <div class="pc-skel"></div><div class="pc-skel"></div>
+      <div class="pc-skel"></div><div class="pc-skel"></div>
+      <div class="pc-skel"></div><div class="pc-skel"></div>
+    </div>
+    <div class="products-grid" id="grid" style="display:none"></div>
+  </div>
+</section>
+
+<!-- Features -->
+<div class="features">
+  <div class="feat"><div class="feat-icon">👑</div><div class="feat-title">جودة فاخرة</div><div class="feat-desc">منتجات أصلية 100% بمواصفات عالمية</div></div>
+  <div class="feat"><div class="feat-icon">🚚</div><div class="feat-title">توصيل للمغرب</div><div class="feat-desc">توصيل لجميع مدن المملكة خلال 24-48 ساعة</div></div>
+  <div class="feat"><div class="feat-icon">💳</div><div class="feat-title">الدفع عند الاستلام</div><div class="feat-desc">ادفع عند وصول طلبك — لا مخاطر</div></div>
+  <div class="feat"><div class="feat-icon">🔄</div><div class="feat-title">إرجاع مجاني</div><div class="feat-desc">إمكانية الإرجاع خلال 7 أيام</div></div>
+</div>
+
+<!-- About -->
+<section class="section" id="about" style="background:var(--black2);border-top:1px solid var(--border)">
+  <div class="sec-title">
+    <span class="s-en">About Us</span>
+    <h2>عن VELORA</h2>
+    <div class="gold-line"></div>
+  </div>
+  <p style="text-align:center;max-width:600px;margin:0 auto;color:var(--muted);font-size:14px;line-height:2">
+    VELORA علامة تجارية مغربية متخصصة في الأزياء الراقية والعطور الفاخرة. نؤمن بأن كل شخص يستحق أن يُعبّر عن شخصيته بأناقة وتميّز. 
+    نختار منتجاتنا بعناية فائقة لنقدم لكم أفضل ما في عالم الموضة والعطور.
+  </p>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-logo">VELORA</div>
+  <div class="footer-tag">Clothing & Perfumes — Morocco</div>
+  <div class="footer-links">
+    <a href="#home">الرئيسية</a>
+    <a href="#products">المنتجات</a>
+    <a href="https://wa.me/212778878421" target="_blank">واتساب</a>
+    <a href="#about">عن VELORA</a>
+  </div>
+  <div class="footer-copy">© 2025 VELORA. جميع الحقوق محفوظة.</div>
+</footer>
+
+<!-- WhatsApp Float -->
+<a href="https://wa.me/212778878421?text=مرحباً، أريد الاستفسار عن منتجات VELORA 🌟" target="_blank" class="wa-float" title="تواصل معنا على واتساب">
+  <svg viewBox="0 0 24 24" fill="white" width="28" height="28"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.549 4.126 1.516 5.874L.057 23.6l5.882-1.524A11.953 11.953 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.879 0-3.663-.491-5.207-1.349l-.374-.22-3.886 1.007 1.036-3.768-.244-.392A9.956 9.956 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+</a>
+
+<!-- Cart Sidebar -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<div class="cart-side" id="cartSide">
+  <div class="cart-hdr">
+    <h3>CART</h3>
+    <button class="cart-x" id="cartClose">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-foot">
+    <div class="cart-total-row">
+      <span class="cart-total-label">المجموع</span>
+      <span class="cart-total-val"><span id="cartTotal">0</span> درهم</span>
+    </div>
+    <button class="wa-btn" id="checkoutBtn" onclick="openOrder()">
+      <svg viewBox="0 0 24 24" fill="white" class="wa-icon"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.549 4.126 1.516 5.874L.057 23.6l5.882-1.524A11.953 11.953 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.879 0-3.663-.491-5.207-1.349l-.374-.22-3.886 1.007 1.036-3.768-.244-.392A9.956 9.956 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+      تأكيد الطلب عبر واتساب
+    </button>
+  </div>
+</div>
+
+<!-- Product Modal -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal" id="modal">
+    <button class="modal-close" id="modalClose">✕</button>
+    <div class="modal-img"><img id="mImg" src="" alt=""></div>
+    <div class="modal-info">
+      <div class="modal-cat" id="mCat"></div>
+      <div class="modal-name" id="mName"></div>
+      <div class="modal-price-row">
+        <div class="modal-price"><span id="mPrice"></span> درهم</div>
+        <div class="modal-old" id="mOld"></div>
+      </div>
+      <div class="modal-desc" id="mDesc"></div>
+      <div id="sizeSection">
+        <div class="size-label">المقاس</div>
+        <div class="sizes" id="sizes"></div>
+      </div>
+      <div class="qty-row">
+        <span class="qty-label">الكمية</span>
+        <div class="qty-ctrl">
+          <button id="qtyMinus">−</button>
+          <div class="qty-val" id="qtyVal">1</div>
+          <button id="qtyPlus">+</button>
+        </div>
+      </div>
+      <button class="add-cart-btn" id="addCartBtn">➕ أضف إلى السلة</button>
+    </div>
+  </div>
+</div>
+
+<!-- Order Modal -->
+<div class="order-bg" id="orderBg">
+  <div class="order-box">
+    <button class="order-close" onclick="closeOrder()">✕</button>
+    <h3>ORDER</h3>
+    <p class="order-sub">أدخل بياناتك وسيتم إرسال طلبك مباشرة على واتساب</p>
+    <div class="of">
+      <label>الاسم الكامل</label>
+      <input id="oName" placeholder="مثال: محمد أمين" type="text">
+    </div>
+    <div class="of-row">
+      <div class="of">
+        <label>رقم الهاتف</label>
+        <input id="oPhone" placeholder="06xxxxxxxx" type="tel">
+      </div>
+      <div class="of">
+        <label>المدينة</label>
+        <select id="oCity">
+          <option value="">اختر المدينة</option>
+          <option>الرباط</option><option>الدار البيضاء</option><option>مراكش</option>
+          <option>فاس</option><option>طنجة</option><option>أكادير</option>
+          <option>مكناس</option><option>وجدة</option><option>القنيطرة</option>
+          <option>تطوان</option><option>سلا</option><option>بني ملال</option>
+          <option>العيون</option><option>الجديدة</option><option>سطات</option>
+          <option>خريبكة</option><option>تازة</option><option>الناظور</option>
+          <option>أخرى</option>
+        </select>
+      </div>
+    </div>
+    <div class="of">
+      <label>العنوان التفصيلي</label>
+      <input id="oAddr" placeholder="الحي، الشارع، رقم البناية..." type="text">
+    </div>
+    <button class="send-wa-btn" onclick="sendWhatsApp()">
+      <svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.549 4.126 1.516 5.874L.057 23.6l5.882-1.524A11.953 11.953 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.879 0-3.663-.491-5.207-1.349l-.374-.22-3.886 1.007 1.036-3.768-.244-.392A9.956 9.956 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+      إرسال الطلب على واتساب الآن
+    </button>
+  </div>
+</div>
+
+<script>
+/* ── Config ── */
+var WA_NUM = '212778878421';
+var API_TOKEN = 'BOUGHA_xUisHlSBPbxIjqRunJGyeMgP2ZU9jq4H';
+
+/* ── Demo Products ── */
+var DEMO = [
+  {id:'c1',name:'قميص فاخر بيج كريمي',nameEn:'Beige Luxury Shirt',cat:'ملابس',tag:'جديد',price:349,old:499,
+   img:'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=600&fit=crop',
+   sizes:['S','M','L','XL','XXL'],desc:'قميص رجالي فاخر من قماش عالي الجودة، مثالي للمناسبات والأوقات اليومية الراقية.'},
+  {id:'c2',name:'عباءة سوداء أنيقة',nameEn:'Black Elegant Abaya',cat:'ملابس',tag:'جديد',price:599,old:799,
+   img:'https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?w=600&fit=crop',
+   sizes:['S','M','L','XL'],desc:'عباءة نسائية أنيقة بتصميم عصري، تجمع بين الأصالة والحداثة، من أجود أنواع القماش.'},
+  {id:'p1',name:'عطر NOIR ROYAL',nameEn:'NOIR ROYAL Perfume',cat:'عطور',tag:'',price:399,old:0,
+   img:'https://images.unsplash.com/photo-1592945403407-3d8f0f49e2e8?w=600&fit=crop',
+   sizes:['50ml','100ml'],desc:'عطر رجالي فاخر بعبق خشب العود والمسك، يدوم أكثر من 12 ساعة. تجربة حسية لا تُنسى.'},
+  {id:'c3',name:'بدلة رجالية كلاسيكية',nameEn:'Classic Men\'s Suit',cat:'ملابس',tag:'',price:899,old:1199,
+   img:'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&fit=crop',
+   sizes:['M','L','XL','XXL'],desc:'بدلة رجالية كلاسيكية بتصميم إيطالي، مثالية للمناسبات الرسمية والاجتماعات المهمة.'},
+  {id:'p2',name:'عطر VELORA ROSE',nameEn:'VELORA ROSE Perfume',cat:'عطور',tag:'جديد',price:449,old:0,
+   img:'https://images.unsplash.com/photo-1541643600914-78b084683702?w=600&fit=crop',
+   sizes:['30ml','50ml','100ml'],desc:'عطر نسائي فريد بعبق الورد الطائفي والياسمين، خفيف وعذب، مثالي للاستخدام اليومي.'},
+  {id:'c4',name:'فستان سهرة ذهبي',nameEn:'Golden Evening Dress',cat:'ملابس',tag:'جديد',price:749,old:999,
+   img:'https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=600&fit=crop',
+   sizes:['XS','S','M','L'],desc:'فستان سهرة فاخر بلمسات ذهبية، يمنحك أناقة ملكية في المناسبات الخاصة والحفلات.'},
+  {id:'p3',name:'عطر OUD MAROCAIN',nameEn:'OUD MAROCAIN Perfume',cat:'عطور',tag:'',price:699,old:899,
+   img:'https://images.unsplash.com/photo-1619994403073-2cec844b8e63?w=600&fit=crop',
+   sizes:['50ml','100ml','200ml'],desc:'عطر شرقي أصيل بعبق العود المغربي الطبيعي، يعكس أصالة وعمق الثقافة المغربية.'},
+  {id:'c5',name:'جلابة رجالية فاخرة',nameEn:'Luxury Men\'s Djellaba',cat:'ملابس',tag:'',price:499,old:699,
+   img:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&fit=crop',
+   sizes:['M','L','XL','XXL'],desc:'جلابة رجالية مغربية فاخرة بتطريز يدوي، تجمع بين التراث الأصيل والذوق الرفيع.'},
+  {id:'p4',name:'عطر AMBRE D\'OR',nameEn:'AMBRE D\'OR Perfume',cat:'عطور',tag:'',price:349,old:0,
+   img:'https://images.unsplash.com/photo-1587017539504-67cfbddac569?w=600&fit=crop',
+   sizes:['50ml','100ml'],desc:'عطر فريد يمزج بين العنبر الذهبي والخزامى والبرغموت، يناسب جميع المواسم.'},
+  {id:'c6',name:'تيشيرت VELORA Luxury',nameEn:'VELORA Luxury T-Shirt',cat:'ملابس',tag:'جديد',price:249,old:349,
+   img:'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=600&fit=crop',
+   sizes:['S','M','L','XL','XXL'],desc:'تيشيرت فاخر بشعار VELORA المطرز، من قماش قطن مصري ناعم وعالي الجودة.'},
+];
+
+/* ── State ── */
+var PRODS = [];
+var CART = [];
+var curProd = null;
+var curQty = 1;
+var curSize = '';
+var curFilter = 'الكل';
+var favs = [];
+
+/* ── Fetch or use demo ── */
+async function loadProducts(){
+  try {
+    var endpoints = [
+      { url:'https://api.youcan.shop/catalog/products', h:{'Authorization':'Bearer '+API_TOKEN,'Accept':'application/json'} },
+    ];
+    for(var ep of endpoints){
+      try{
+        var r = await fetch(ep.url, {headers:ep.h, signal:AbortSignal.timeout(4000)});
+        if(r.ok){
+          var d = await r.json();
+          var arr = d.data || d.products || (Array.isArray(d)?d:[]);
+          if(arr.length > 0){ PRODS = arr.map(normalizeProduct); renderProducts(); return; }
+        }
+      }catch(e){}
+    }
+  }catch(e){}
+  PRODS = DEMO;
+  renderProducts();
+}
+
+function normalizeProduct(p){
+  return {
+    id: p.id || p.slug,
+    name: p.name || p.title || '',
+    cat: (p.categories&&p.categories[0]&&p.categories[0].name) || 'ملابس',
+    tag: p.is_new ? 'جديد' : '',
+    price: p.price ? Math.round(p.price/100) : 0,
+    old: p.compare_at_price ? Math.round(p.compare_at_price/100) : 0,
+    img: (p.thumbnail||p.image||p.images&&p.images[0]||{}).url || '',
+    sizes: ['S','M','L','XL'],
+    desc: p.description || ''
+  };
+}
+
+/* ── Render ── */
+function renderProducts(){
+  document.getElementById('loadingGrid').style.display = 'none';
+  var g = document.getElementById('grid');
+  g.style.display = 'grid';
+  var list = PRODS.filter(function(p){
+    if(curFilter === 'الكل') return true;
+    if(curFilter === 'جديد') return p.tag === 'جديد';
+    return p.cat === curFilter;
+  });
+  if(!list.length){
+    g.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:40px">لا توجد منتجات في هذه الفئة</div>';
+    return;
+  }
+  g.innerHTML = list.map(function(p){
+    var fav = favs.indexOf(p.id) > -1;
+    return '<div class="pc" data-id="'+p.id+'">'+
+      '<div class="pc-img">'+
+        '<img src="'+p.img+'" alt="'+p.name+'" loading="lazy" onerror="this.src=\'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&fit=crop\'">'+
+        (p.tag?'<div class="pc-badge pc-new">'+p.tag+'</div>':'')+
+        '<div class="pc-overlay"><button class="pc-quick" data-id="'+p.id+'">تفاصيل</button></div>'+
+      '</div>'+
+      '<div class="pc-body">'+
+        '<div class="pc-cat">'+p.cat+'</div>'+
+        '<div class="pc-name">'+p.name+'</div>'+
+        '<div class="pc-price-row">'+
+          '<div>'+
+            (p.old?'<span class="pc-price-old">'+p.old+' د</span>':'')+
+            '<span class="pc-price">'+p.price+' درهم</span>'+
+          '</div>'+
+          '<button class="pc-fav'+(fav?' on':'')+'" data-fav="'+p.id+'">♡</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function setFilter(f){
+  curFilter = f;
+  document.querySelectorAll('.cat-btn').forEach(function(b){ b.classList.toggle('on', b.dataset.cat === f); });
+  renderProducts();
+}
+
+/* ── Event delegation ── */
+document.getElementById('grid').addEventListener('click', function(e){
+  var fav = e.target.closest('[data-fav]');
+  if(fav){ e.stopPropagation(); toggleFav(fav.dataset.fav); return; }
+  var quick = e.target.closest('[data-id]');
+  if(quick){ openModal(quick.dataset.id); }
+});
+
+document.querySelectorAll('.cat-btn').forEach(function(b){
+  b.addEventListener('click', function(){ setFilter(this.dataset.cat); });
+});
+
+/* ── Favs ── */
+function toggleFav(id){
+  var i = favs.indexOf(id);
+  if(i>-1) favs.splice(i,1); else favs.push(id);
+  renderProducts();
+}
+
+/* ── Modal ── */
+function openModal(id){
+  var p = PRODS.find(function(x){ return String(x.id)===String(id); });
+  if(!p) return;
+  curProd = p; curQty = 1; curSize = '';
+  document.getElementById('mImg').src = p.img;
+  document.getElementById('mImg').alt = p.name;
+  document.getElementById('mCat').textContent = p.cat;
+  document.getElementById('mName').textContent = p.name;
+  document.getElementById('mPrice').textContent = p.price;
+  var oldEl = document.getElementById('mOld');
+  oldEl.textContent = p.old ? p.old+' درهم' : '';
+  document.getElementById('mDesc').textContent = p.desc;
+
+  var szSec = document.getElementById('sizeSection');
+  if(p.sizes && p.sizes.length){
+    szSec.style.display = 'block';
+    document.getElementById('sizes').innerHTML = p.sizes.map(function(s){
+      return '<button class="sz" data-sz="'+s+'">'+s+'</button>';
+    }).join('');
+  } else {
+    szSec.style.display = 'none';
+  }
+  document.getElementById('qtyVal').textContent = '1';
+  document.getElementById('modalBg').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(){
+  document.getElementById('modalBg').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('modalBg').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+
+document.getElementById('sizes').addEventListener('click', function(e){
+  var b = e.target.closest('[data-sz]'); if(!b) return;
+  document.querySelectorAll('.sz').forEach(function(x){ x.classList.remove('on'); });
+  b.classList.add('on');
+  curSize = b.dataset.sz;
+});
+
+document.getElementById('qtyMinus').addEventListener('click', function(){
+  if(curQty>1){ curQty--; document.getElementById('qtyVal').textContent = curQty; }
+});
+document.getElementById('qtyPlus').addEventListener('click', function(){
+  curQty++; document.getElementById('qtyVal').textContent = curQty;
+});
+
+document.getElementById('addCartBtn').addEventListener('click', function(){
+  if(!curProd) return;
+  if(curProd.sizes && curProd.sizes.length && !curSize){ toast('اختر المقاس أولاً'); return; }
+  addToCart(curProd, curQty, curSize);
+  closeModal();
+  openCart();
+});
+
+/* ── Cart ── */
+function addToCart(p, qty, size){
+  var key = p.id + '-' + size;
+  var ex = CART.find(function(x){ return x.key===key; });
+  if(ex){ ex.qty += qty; }
+  else { CART.push({key:key, id:p.id, name:p.name, price:p.price, img:p.img, size:size, qty:qty}); }
+  updateCartUI();
+  toast('✓ أُضيف للسلة');
+}
+
+function removeFromCart(key){
+  CART = CART.filter(function(x){ return x.key!==key; });
+  updateCartUI();
+  renderCart();
+}
+
+function cartTotal(){
+  return CART.reduce(function(s,x){ return s+x.price*x.qty; }, 0);
+}
+
+function updateCartUI(){
+  var count = CART.reduce(function(s,x){ return s+x.qty; }, 0);
+  document.getElementById('cartCount').textContent = count;
+  document.getElementById('cartTotal').textContent = cartTotal().toLocaleString();
+}
+
+function renderCart(){
+  var el = document.getElementById('cartItems');
+  if(!CART.length){
+    el.innerHTML = '<div class="cart-empty"><span>🛍</span><div>سلتك فارغة</div><div style="font-size:12px">أضف منتجات لتبدأ التسوق</div></div>';
+    return;
+  }
+  el.innerHTML = CART.map(function(c){
+    return '<div class="ci">'+
+      '<img class="ci-img" src="'+c.img+'" alt="'+c.name+'" onerror="this.src=\'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=200&fit=crop\'">'+
+      '<div class="ci-info">'+
+        '<div class="ci-name">'+c.name+'</div>'+
+        '<div class="ci-meta">'+(c.size?'المقاس: '+c.size+' — ':'')+'الكمية: '+c.qty+'</div>'+
+        '<div class="ci-price">'+c.price+' × '+c.qty+' = '+(c.price*c.qty)+' درهم</div>'+
+        '<button class="ci-del" data-key="'+c.key+'">🗑 إزالة</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+document.getElementById('cartItems').addEventListener('click', function(e){
+  var b = e.target.closest('[data-key]'); if(b) removeFromCart(b.dataset.key);
+});
+
+function openCart(){
+  renderCart();
+  document.getElementById('cartSide').classList.add('open');
+  document.getElementById('cartOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeCart(){
+  document.getElementById('cartSide').classList.remove('open');
+  document.getElementById('cartOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('cartBtn').addEventListener('click', openCart);
+document.getElementById('cartClose').addEventListener('click', closeCart);
+document.getElementById('cartOverlay').addEventListener('click', closeCart);
+
+/* ── Order Modal ── */
+function openOrder(){
+  if(!CART.length){ toast('السلة فارغة'); return; }
+  closeCart();
+  document.getElementById('orderBg').classList.add('open');
+}
+function closeOrder(){
+  document.getElementById('orderBg').classList.remove('open');
+}
+
+/* ── WhatsApp Send ── */
+function sendWhatsApp(){
+  var name = document.getElementById('oName').value.trim();
+  var phone = document.getElementById('oPhone').value.trim();
+  var city = document.getElementById('oCity').value.trim();
+  var addr = document.getElementById('oAddr').value.trim();
+
+  if(!name){ toast('أدخل اسمك الكامل'); return; }
+  if(!phone){ toast('أدخل رقم هاتفك'); return; }
+  if(!city){ toast('اختر مدينتك'); return; }
+  if(!addr){ toast('أدخل عنوانك'); return; }
+
+  var items = CART.map(function(c, i){
+    return (i+1)+'. '+c.name+(c.size?' ('+c.size+')')+'  ×'+c.qty+'  = '+c.price*c.qty+' درهم';
+  }).join('\n');
+
+  var total = cartTotal();
+  var msg =
+    '🌟 *طلب جديد من VELORA* 🌟\n'+
+    '━━━━━━━━━━━━━━━━━━\n'+
+    '👤 *الاسم:* '+name+'\n'+
+    '📞 *الهاتف:* '+phone+'\n'+
+    '🏙️ *المدينة:* '+city+'\n'+
+    '📍 *العنوان:* '+addr+'\n'+
+    '━━━━━━━━━━━━━━━━━━\n'+
+    '📦 *المنتجات المطلوبة:*\n'+items+'\n'+
+    '━━━━━━━━━━━━━━━━━━\n'+
+    '💰 *المجموع الكلي: '+total+' درهم*\n'+
+    '🚚 *طريقة الدفع:* عند الاستلام (Cash on Delivery)\n'+
+    '━━━━━━━━━━━━━━━━━━\n'+
+    '✨ شكراً للتسوق من VELORA — Clothing & Perfumes';
+
+  var url = 'https://wa.me/'+WA_NUM+'?text='+encodeURIComponent(msg);
+  window.open(url, '_blank');
+  closeOrder();
+  CART = [];
+  updateCartUI();
+  toast('🎉 تم إرسال طلبك! شكراً لك');
+}
+
+/* ── Toast ── */
+function toast(msg){
+  var t = document.createElement('div'); t.className='toast'; t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(function(){ t.parentNode&&t.parentNode.removeChild(t); }, 2500);
+}
+
+/* ── Boot ── */
+loadProducts();
+</script>
+</body>
+</html>
