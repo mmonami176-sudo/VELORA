@@ -472,14 +472,31 @@ function getAdminProds(){
 
 /* ── Fetch or use demo ── */
 async function loadProducts(){
-  /* 1. منتجات لوحة التحكم أولاً */
+  /* 1. جلب من GitHub (products.json) — يظهر لجميع الزبناء */
+  try{
+    var url = 'https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/products.json?t='+Date.now();
+    var r = await fetch(url);
+    if(r.ok){
+      var data = await r.json();
+      if(Array.isArray(data) && data.length){
+        PRODS = data;
+        /* حفظ محلي كـ cache */
+        try{ localStorage.setItem('velora_products', JSON.stringify(data)); }catch(e){}
+        renderProducts();
+        return;
+      }
+    }
+  }catch(e){}
+
+  /* 2. cache محلي (نفس الجهاز) */
   var adminProds = getAdminProds();
   if(adminProds){
     PRODS = adminProds;
     renderProducts();
     return;
   }
-  /* 2. fallback للمنتجات التجريبية */
+
+  /* 3. منتج تجريبي */
   PRODS = DEMO;
   renderProducts();
 }

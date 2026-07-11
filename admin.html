@@ -376,6 +376,18 @@ body{background:var(--black);color:var(--white);overflow-x:hidden}
             <button class="btn-add" style="margin-top:10px" onclick="saveWA()">💾 حفظ</button>
           </div>
           <div class="settings-section">
+            <div class="settings-title">🔗 ربط GitHub (النشر التلقائي)</div>
+            <div class="field">
+              <label>Personal Access Token — صلاحية (repo)</label>
+              <input id="ghTokenInp" type="password" placeholder="ghp_...">
+            </div>
+            <div id="ghStatus" style="font-size:12px;color:var(--muted);margin:6px 0"></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+              <button class="btn-add" onclick="saveGHToken()">💾 حفظ التوكن</button>
+              <button class="btn-outline" onclick="testGHToken()">🔍 اختبار الاتصال</button>
+            </div>
+          </div>
+          <div class="settings-section">
             <div class="settings-title">إدارة البيانات</div>
             <div style="display:flex;gap:10px;flex-wrap:wrap">
               <button class="btn-outline" onclick="exportData()">📤 تصدير المنتجات</button>
@@ -547,6 +559,117 @@ function getProds(){
 }
 function saveProds(p){ localStorage.setItem(K_PRODS, JSON.stringify(p)); }
 
+/* ── GitHub API ── */
+var GH_OWNER = 'mmonami176-sudo';
+var GH_REPO  = 'VELORA';
+var GH_BRANCH = 'main';
+
+function ghToken(){ return getSetting('ghToken',''); }
+
+async function ghGet(path){
+  var t = ghToken(); if(!t) throw new Error('no_token');
+  var r = await fetch(
+    'https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+path+'?ref='+GH_BRANCH,
+    {headers:{Authorization:'token '+t,Accept:'application/vnd.github.v3+json'}}
+  );
+  if(!r.ok) throw new Error(r.status);
+  return r.json();
+}
+
+async function ghPut(path, contentStr, msg, sha){
+  var t = ghToken(); if(!t) throw new Error('no_token');
+  /* encode UTF-8 safely to base64 */
+  var b64 = btoa(unescape(encodeURIComponent(contentStr)));
+  var body = {message:msg, content:b64, branch:GH_BRANCH};
+  if(sha) body.sha = sha;
+  var r = await fetch(
+    'https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+path,
+    {method:'PUT',
+     headers:{Authorization:'token '+t,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},
+     body:JSON.stringify(body)}
+  );
+  if(!r.ok) throw new Error(r.status);
+  return r.json();
+}
+
+/* رفع صورة إلى مجلد imgs/ وإرجاع رابطها العام */
+async function uploadImg(dataUrl, prodId, idx){
+  if(!ghToken()) return dataUrl;           /* بدون توكن: احتفظ بـ base64 */
+  if(!dataUrl.startsWith('data:')) return dataUrl; /* رابط خارجي: لا ترفعه */
+  var filename = 'prod-'+prodId+'-'+idx+'.jpg';
+  var base64 = dataUrl.split(',')[1];
+  var sha = null;
+  try{ var ex = await ghGet('imgs/'+filename); sha = ex.sha; }catch(e){}
+  var body = {message:'img: '+filename, content:base64, branch:GH_BRANCH};
+  if(sha) body.sha = sha;
+  var r = await fetch(
+    'https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/imgs/'+filename,
+    {method:'PUT',
+     headers:{Authorization:'token '+ghToken(),Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},
+     body:JSON.stringify(body)}
+  );
+  if(!r.ok) return dataUrl;
+  var res = await r.json();
+  /* raw.githubusercontent.com لا يحتاج توكن — مناسب للمتجر */
+  return 'https://raw.githubusercontent.com/'+GH_OWNER+'/'+GH_REPO+'/'+GH_BRANCH+'/imgs/'+filename;
+}
+
+/* مزامنة قائمة المنتجات مع products.json على GitHub */
+async function syncToGH(prods){
+  if(!ghToken()){ toast('⚠️ أضف توكن GitHub في الإعدادات أولاً'); return; }
+  setBusy(true);
+  try{
+    var sha = null;
+    try{ var ex = await ghGet('products.json'); sha = ex.sha; }catch(e){}
+    await ghPut('products.json', JSON.stringify(prods,null,2), 'update products', sha);
+    toast('🌐 تم النشر — المتجر محدَّث');
+  }catch(e){
+    toast('❌ فشل النشر: '+e.message);
+  } finally {
+    setBusy(false);
+  }
+}
+
+function setBusy(on){
+  var btn = document.querySelector('.btn-add[onclick="saveProduct()"]');
+  if(btn) btn.textContent = on ? '⏳ جارٍ النشر...' : '💾 حفظ المنتج';
+}
+
+/* تحميل المنتجات من GitHub عند بدء التشغيل */
+async function loadFromGH(){
+  if(!ghToken()) return;
+  try{
+    var data = await ghGet('products.json');
+    var json = decodeURIComponent(escape(atob(data.content.replace(/\n/g,''))));
+    var prods = JSON.parse(json);
+    if(Array.isArray(prods)){
+      saveProds(prods);
+    }
+  }catch(e){/* no products.json yet — OK */}
+}
+
+/* GitHub token settings helpers */
+function saveGHToken(){
+  var t = document.getElementById('ghTokenInp').value.trim();
+  if(!t){ toast('أدخل التوكن'); return; }
+  saveSettings({ghToken:t});
+  document.getElementById('ghTokenInp').value='';
+  document.getElementById('ghStatus').textContent = '✅ تم الحفظ — التوكن محفوظ في هذا الجهاز فقط';
+  toast('✅ تم حفظ التوكن');
+}
+async function testGHToken(){
+  var t = document.getElementById('ghTokenInp').value.trim() || ghToken();
+  if(!t){ toast('أدخل التوكن أولاً'); return; }
+  var el = document.getElementById('ghStatus');
+  el.textContent = '⏳ جارٍ الاختبار...';
+  try{
+    var r = await fetch('https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO,
+      {headers:{Authorization:'token '+t}});
+    if(r.ok){ el.textContent = '✅ الاتصال ناجح — المستودع متاح'; }
+    else     { el.textContent = '❌ فشل: '+r.status+' — تحقق من التوكن والصلاحيات'; }
+  }catch(e){ el.textContent = '❌ خطأ في الشبكة'; }
+}
+
 /* ── Auth ── */
 async function doLogin(){
   var pwd = document.getElementById('pwdInp').value;
@@ -584,7 +707,7 @@ document.getElementById('pwdInp').addEventListener('keydown', function(e){
 });
 
 /* ── Init ── */
-function initApp(){
+async function initApp(){
   // Nav
   document.querySelectorAll('.nav-item').forEach(function(n){
     n.addEventListener('click', function(){
@@ -598,6 +721,8 @@ function initApp(){
       if(n.dataset.sec==='settings') renderSettingsPage();
     });
   });
+  /* جلب المنتجات من GitHub أولاً */
+  await loadFromGH();
   renderDashboard();
   renderDelivery();
   renderSettingsPage();
@@ -651,13 +776,13 @@ function renderProdRow(p){
   '</div>';
 }
 
-function deleteProd(id){
+async function deleteProd(id){
   if(!confirm('حذف هذا المنتج؟')) return;
   var prods = getProds().filter(function(p){ return p.id !== id; });
   saveProds(prods);
   renderProdList();
   renderDashboard();
-  toast('تم حذف المنتج');
+  await syncToGH(prods);
 }
 
 /* ── Form State ── */
@@ -757,22 +882,33 @@ document.querySelectorAll('.size-chip').forEach(function(c){
   c.addEventListener('click', function(){ c.classList.toggle('on'); });
 });
 
-function saveProduct(){
+async function saveProduct(){
   var name = document.getElementById('fName').value.trim();
   var price = parseFloat(document.getElementById('fPrice').value);
   if(!name){ toast('أدخل اسم المنتج'); return; }
   if(!price){ toast('أدخل السعر'); return; }
 
-  var imgs = formImgs.filter(Boolean);
+  var rawImgs = formImgs.filter(Boolean);
   var urlImg = document.getElementById('imgUrl').value.trim();
-  if(urlImg && !imgs.length) imgs = [urlImg];
-  if(!imgs.length){ toast('أضف صورة واحدة على الأقل'); return; }
+  if(urlImg && !rawImgs.length) rawImgs = [urlImg];
+  if(!rawImgs.length){ toast('أضف صورة واحدة على الأقل'); return; }
 
   var sizes = [];
   document.querySelectorAll('.size-chip.on').forEach(function(c){ sizes.push(c.dataset.size); });
 
+  var prodId = editId || ('p'+ Date.now());
+
+  /* رفع الصور إلى GitHub وتحويلها إلى روابط عامة */
+  setBusy(true);
+  toast('⏳ جارٍ رفع الصور...');
+  var imgs = [];
+  for(var i=0; i<rawImgs.length; i++){
+    var url = await uploadImg(rawImgs[i], prodId, i);
+    imgs.push(url);
+  }
+
   var prod = {
-    id: editId || ('p'+ Date.now()),
+    id: prodId,
     name: name,
     cat: document.getElementById('fCat').value,
     tag: document.getElementById('fTag').value,
@@ -788,15 +924,16 @@ function saveProduct(){
   var prods = getProds();
   if(editId){
     prods = prods.map(function(p){ return p.id===editId ? prod : p; });
-    toast('✅ تم تحديث المنتج');
   } else {
     prods.push(prod);
-    toast('✅ تم إضافة المنتج');
   }
   saveProds(prods);
   closeForm();
   renderProdList();
   renderDashboard();
+
+  /* مزامنة مع GitHub */
+  await syncToGH(prods);
 }
 
 /* ── Delivery ── */
@@ -827,6 +964,8 @@ function renderSettingsPage(){
   var s = getSettings();
   var waEl = document.getElementById('waNum');
   if(waEl) waEl.value = s.whatsapp || '212778878421';
+  var ghEl = document.getElementById('ghStatus');
+  if(ghEl) ghEl.textContent = s.ghToken ? '✅ التوكن محفوظ — المتجر سيُحدَّث تلقائياً عند إضافة منتج' : '⚠️ لم يتم إضافة توكن بعد — المنتجات لن تظهر للزبناء';
 }
 async function changePwd(){
   var cur = document.getElementById('curPwd').value;
@@ -864,12 +1003,12 @@ function exportData(){
   a.download = 'velora-backup.json';
   a.click();
 }
-function clearAllProds(){
+async function clearAllProds(){
   if(!confirm('⚠️ حذف جميع المنتجات؟ هذا الإجراء لا يمكن التراجع عنه!')) return;
   saveProds([]);
   renderProdList();
   renderDashboard();
-  toast('تم حذف جميع المنتجات');
+  await syncToGH([]);
 }
 
 /* ── Toast ── */
