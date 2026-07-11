@@ -249,12 +249,31 @@ body{background:var(--black);color:var(--white);overflow-x:hidden}
 }
 .toast.show{transform:translateX(-50%) translateY(0)}
 
+/* ── BOTTOM NAV (mobile) ── */
+.bot-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--black2);border-top:1px solid var(--border);
+  z-index:400;
+}
+.bot-nav-inner{display:flex;justify-content:space-around}
+.bn-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  gap:3px;padding:10px 4px;cursor:pointer;
+  color:var(--muted);font-size:10px;font-weight:600;
+  letter-spacing:.5px;border:none;background:none;
+  font-family:var(--font);transition:.15s;
+}
+.bn-item .bn-ico{font-size:20px}
+.bn-item.on{color:var(--gold)}
+
 /* ── RESPONSIVE ── */
 @media(max-width:600px){
   .sidebar{display:none}
+  .bot-nav{display:block}
   .form-grid{grid-template-columns:1fr}
   .imgs-grid{grid-template-columns:repeat(2,1fr)}
-  .content{padding:16px}
+  .content{padding:16px;padding-bottom:80px}
   .modal{padding:20px}
 }
 </style>
@@ -398,6 +417,16 @@ body{background:var(--black);color:var(--white);overflow-x:hidden}
       </div>
 
     </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV (mobile only) -->
+<div class="bot-nav" id="botNav">
+  <div class="bot-nav-inner">
+    <button class="bn-item on" data-sec="dashboard"><span class="bn-ico">📊</span>الرئيسية</button>
+    <button class="bn-item" data-sec="products"><span class="bn-ico">📦</span>المنتجات</button>
+    <button class="bn-item" data-sec="delivery"><span class="bn-ico">🚚</span>التوصيل</button>
+    <button class="bn-item" data-sec="settings"><span class="bn-ico">⚙️</span>الإعدادات</button>
   </div>
 </div>
 
@@ -706,20 +735,31 @@ document.getElementById('pwdInp').addEventListener('keydown', function(e){
   if(e.key==='Enter') doLogin();
 });
 
+/* ── Navigation (sidebar + bottom bar) ── */
+function switchSection(sec){
+  document.querySelectorAll('.nav-item').forEach(function(x){ x.classList.remove('on'); });
+  document.querySelectorAll('.bn-item').forEach(function(x){ x.classList.remove('on'); });
+  document.querySelectorAll('.section').forEach(function(x){ x.classList.remove('on'); });
+
+  var sideItem = document.querySelector('.nav-item[data-sec="'+sec+'"]');
+  var botItem  = document.querySelector('.bn-item[data-sec="'+sec+'"]');
+  if(sideItem) sideItem.classList.add('on');
+  if(botItem)  botItem.classList.add('on');
+  document.getElementById('sec-'+sec).classList.add('on');
+
+  if(sec==='products')  renderProdList();
+  if(sec==='dashboard') renderDashboard();
+  if(sec==='delivery')  renderDelivery();
+  if(sec==='settings')  renderSettingsPage();
+}
+
 /* ── Init ── */
 async function initApp(){
-  // Nav
   document.querySelectorAll('.nav-item').forEach(function(n){
-    n.addEventListener('click', function(){
-      document.querySelectorAll('.nav-item').forEach(function(x){ x.classList.remove('on'); });
-      document.querySelectorAll('.section').forEach(function(x){ x.classList.remove('on'); });
-      n.classList.add('on');
-      document.getElementById('sec-'+n.dataset.sec).classList.add('on');
-      if(n.dataset.sec==='products') renderProdList();
-      if(n.dataset.sec==='dashboard') renderDashboard();
-      if(n.dataset.sec==='delivery') renderDelivery();
-      if(n.dataset.sec==='settings') renderSettingsPage();
-    });
+    n.addEventListener('click', function(){ switchSection(n.dataset.sec); });
+  });
+  document.querySelectorAll('.bn-item').forEach(function(n){
+    n.addEventListener('click', function(){ switchSection(n.dataset.sec); });
   });
   /* جلب المنتجات من GitHub أولاً */
   await loadFromGH();
