@@ -658,18 +658,58 @@ async function uploadImg(dataUrl, prodId, idx){
 
 /* مزامنة قائمة المنتجات مع products.json على GitHub */
 async function syncToGH(prods){
-  if(!ghToken()){ toast('⚠️ أضف توكن GitHub في الإعدادات أولاً'); return; }
+  if(!ghToken()){
+    toast('⚠️ لم يُنشر — لا يوجد توكن GitHub! أضفه من الإعدادات أولاً');
+    showPublishBanner('⚠️ آخر تعديل محفوظ على هذا الجهاز فقط — لم يظهر للعامة بعد. أضف توكن GitHub من الإعدادات ثم أعد الحفظ.');
+    return false;
+  }
   setBusy(true);
   try{
     var sha = null;
     try{ var ex = await ghGet('products.json'); sha = ex.sha; }catch(e){}
     await ghPut('products.json', JSON.stringify(prods,null,2), 'update products', sha);
-    toast('🌐 تم النشر — المتجر محدَّث');
+
+    /* تحقّق فعلي: أعد قراءة products.json من GitHub وتأكد أن كل المنتجات المحلية موجودة فيه */
+    var verifyOk = false;
+    try{
+      var check = await ghGet('products.json');
+      var checkJson = JSON.parse(decodeURIComponent(escape(atob(check.content.replace(/\n/g,'')))));
+      var checkIds = checkJson.map(function(p){ return p.id; });
+      verifyOk = prods.every(function(p){ return checkIds.indexOf(p.id) > -1; }) && checkJson.length === prods.length;
+    }catch(e){}
+
+    if(verifyOk){
+      toast('🌐 تم التأكد من النشر — يظهر الآن للجميع');
+      hidePublishBanner();
+    } else {
+      toast('⚠️ نُشر لكن التحقق فشل — تحقّق من الموقع يدويًا');
+      showPublishBanner('⚠️ تم إرسال البيانات لكن لم نتمكن من تأكيد ظهورها للعامة. تحقّق من الموقع بعد دقيقة، وإن لم يظهر المنتج أعد الضغط على حفظ.');
+    }
+    return verifyOk;
   }catch(e){
     toast('❌ فشل النشر: '+e.message);
+    showPublishBanner('❌ فشل نشر آخر تعديل (خطأ: '+e.message+'). المنتج محفوظ على هذا الجهاز فقط ولن يظهر للعامة حتى تنجح إعادة النشر.');
+    return false;
   } finally {
     setBusy(false);
   }
+}
+
+/* شريط تحذير ثابت يبقى ظاهرًا حتى ينجح النشر — لا يفوت الأدمن مثل التوست العابر */
+function showPublishBanner(msg){
+  var b = document.getElementById('publishBanner');
+  if(!b){
+    b = document.createElement('div');
+    b.id = 'publishBanner';
+    b.style.cssText = 'position:sticky;top:0;z-index:300;background:#3a1f1f;color:#ffb4b4;padding:10px 16px;font-size:13px;font-weight:600;text-align:center;border-bottom:1px solid #a33';
+    document.body.insertBefore(b, document.body.firstChild);
+  }
+  b.textContent = msg;
+  b.style.display = 'block';
+}
+function hidePublishBanner(){
+  var b = document.getElementById('publishBanner');
+  if(b) b.style.display = 'none';
 }
 
 function setBusy(on){
