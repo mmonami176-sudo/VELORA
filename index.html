@@ -476,11 +476,17 @@ function getAdminProds(){
 }
 
 /* ── Fetch or use demo ── */
-async function fetchJSON(url){
+async function fetchJSON(url, timeoutMs){
   /* لا نضيف Cache-Control request-headers — تكسر CORS على GitHub Pages */
-  var r = await fetch(url, {cache: 'no-store'});
-  if(!r.ok) throw new Error(r.status);
-  return r.json();
+  var ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+  var timer = ctrl ? setTimeout(function(){ ctrl.abort(); }, timeoutMs || 6000) : null;
+  try{
+    var r = await fetch(url, {cache: 'no-store', signal: ctrl ? ctrl.signal : undefined});
+    if(!r.ok) throw new Error(r.status);
+    return await r.json();
+  } finally {
+    if(timer) clearTimeout(timer);
+  }
 }
 
 async function loadProducts(){
