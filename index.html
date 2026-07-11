@@ -296,6 +296,7 @@ footer{background:var(--black2);border-top:1px solid var(--border);padding:40px 
     <button class="cat-btn" data-cat="ملابس">👗 ملابس</button>
     <button class="cat-btn" data-cat="عطور">🌸 عطور</button>
     <button class="cat-btn" data-cat="جديد">✨ الجديد</button>
+    <button class="cat-btn" onclick="reloadProds()" title="تحديث المنتجات" style="border-color:transparent;padding:9px 14px">🔄</button>
   </div>
 
   <div id="prodContainer">
@@ -471,32 +472,45 @@ function getAdminProds(){
 }
 
 /* ── Fetch or use demo ── */
+async function fetchJSON(url){
+  var r = await fetch(url, {
+    cache: 'no-store',
+    headers: {'Cache-Control':'no-cache', 'Pragma':'no-cache'}
+  });
+  if(!r.ok) throw new Error(r.status);
+  return r.json();
+}
+
 async function loadProducts(){
-  /* 1. جلب من GitHub (products.json) — يظهر لجميع الزبناء */
+  var t = '?t=' + Date.now();
+
+  /* 1. GitHub Pages (نفس المستودع — أسرع وأحدث) */
   try{
-    var url = 'https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/products.json?t='+Date.now();
-    var r = await fetch(url);
-    if(r.ok){
-      var data = await r.json();
-      if(Array.isArray(data) && data.length){
-        PRODS = data;
-        /* حفظ محلي كـ cache */
-        try{ localStorage.setItem('velora_products', JSON.stringify(data)); }catch(e){}
-        renderProducts();
-        return;
-      }
+    var data = await fetchJSON('https://mmonami176-sudo.github.io/VELORA/products.json' + t);
+    if(Array.isArray(data) && data.length){
+      PRODS = data;
+      try{ localStorage.setItem('velora_products', JSON.stringify(data)); }catch(e){}
+      renderProducts();
+      return;
     }
   }catch(e){}
 
-  /* 2. cache محلي (نفس الجهاز) */
-  var adminProds = getAdminProds();
-  if(adminProds){
-    PRODS = adminProds;
-    renderProducts();
-    return;
-  }
+  /* 2. raw.githubusercontent.com (احتياطي) */
+  try{
+    var data2 = await fetchJSON('https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/products.json' + t);
+    if(Array.isArray(data2) && data2.length){
+      PRODS = data2;
+      try{ localStorage.setItem('velora_products', JSON.stringify(data2)); }catch(e){}
+      renderProducts();
+      return;
+    }
+  }catch(e){}
 
-  /* 3. منتج تجريبي */
+  /* 3. cache محلي (نفس الجهاز) */
+  var adminProds = getAdminProds();
+  if(adminProds){ PRODS = adminProds; renderProducts(); return; }
+
+  /* 4. منتج تجريبي */
   PRODS = DEMO;
   renderProducts();
 }
@@ -557,6 +571,15 @@ function renderProducts(){
       '</div>'+
     '</div>';
   }).join('');
+}
+
+async function reloadProds(){
+  var btn = document.querySelector('[onclick="reloadProds()"]');
+  if(btn){ btn.textContent='⏳'; btn.disabled=true; }
+  document.getElementById('loadingGrid').style.display='flex';
+  document.getElementById('grid').style.display='none';
+  await loadProducts();
+  if(btn){ btn.textContent='🔄'; btn.disabled=false; }
 }
 
 function setFilter(f){
