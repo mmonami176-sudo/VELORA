@@ -18,5 +18,27 @@
     ],
     "img": "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783783644449-0.jpg",
     "freeDelivery": true
+  },
+  {
+    "id": "p1783786399899",
+    "name": "قفطان/لبسة+أمازيغية+أصيلة+🌿✨ ✅",
+    "cat": "ملابس",
+    "tag": "تخفيض",
+    "price": 850,
+    "old": 1049,
+    "desc": "📌+لبسة+أمازيغية+مطرزة\nقفطان/لبسة+أمازيغية+أصيلة+🌿✨\n✅+تصميم+مطرز+بلمسة+تقليدية+فاخرة\n✅+خامة+كريب+رو",
+    "sizes": [
+      "XL",
+      "XXL",
+      "30ml"
+    ],
+    "imgs": [
+      "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783786399899-0.jpg",
+      "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783786399899-1.jpg",
+      "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783786399899-2.jpg",
+      "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783786399899-3.jpg"
+    ],
+    "img": "https://raw.githubusercontent.com/mmonami176-sudo/VELORA/main/imgs/prod-p1783786399899-0.jpg",
+    "freeDelivery": true
   }
 ]
