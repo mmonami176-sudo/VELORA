@@ -82,28 +82,38 @@ nav a:hover{color:var(--gold)}
 .cat-btn:hover:not(.on){border-color:var(--gold3);color:var(--gold3)}
 
 /* ── Products Grid ── */
-.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px;max-width:1200px;margin:0 auto}
+.products-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  max-width:1400px;
+  margin:0 auto;
+  padding:0 4px;
+}
+@media(min-width:560px){.products-grid{grid-template-columns:repeat(3,1fr);gap:12px}}
+@media(min-width:820px){.products-grid{grid-template-columns:repeat(4,1fr);gap:14px}}
+@media(min-width:1100px){.products-grid{grid-template-columns:repeat(5,1fr);gap:14px}}
 
 /* ── Product Card ── */
-.pc{background:var(--black2);border:1px solid var(--border);cursor:pointer;transition:.2s;position:relative;overflow:hidden}
-.pc:hover{border-color:var(--gold);transform:translateY(-3px)}
+.pc{background:var(--black2);border:1px solid var(--border);cursor:pointer;transition:.2s;position:relative;overflow:hidden;border-radius:4px}
+.pc:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 6px 24px rgba(201,168,76,.15)}
 .pc-img{position:relative;aspect-ratio:3/4;overflow:hidden}
 .pc-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
-.pc:hover .pc-img img{transform:scale(1.05)}
-.pc-badge{position:absolute;top:12px;right:12px;font-size:10px;font-weight:800;padding:4px 10px;letter-spacing:1px;text-transform:uppercase;border-radius:2px}
+.pc:hover .pc-img img{transform:scale(1.06)}
+.pc-badge{position:absolute;top:8px;right:8px;font-size:9px;font-weight:800;padding:3px 8px;letter-spacing:1px;text-transform:uppercase;border-radius:2px}
 .pc-new{background:var(--black);color:var(--gold);border:1px solid var(--gold)}
-.pc-fd{background:#f1c40f;color:#0a0a0a;box-shadow:0 2px 8px rgba(241,196,15,.5)}
-.pc-overlay{position:absolute;inset:0;background:rgba(10,10,10,.6);display:flex;align-items:center;justify-content:center;opacity:0;transition:.2s}
+.pc-fd{background:#f1c40f;color:#0a0a0a;box-shadow:0 2px 8px rgba(241,196,15,.4)}
+.pc-overlay{position:absolute;inset:0;background:rgba(10,10,10,.55);display:flex;align-items:center;justify-content:center;opacity:0;transition:.2s}
 .pc:hover .pc-overlay{opacity:1}
-.pc-quick{background:var(--gold);color:var(--black);border:none;padding:11px 24px;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;font-family:var(--font-ar);transition:.15s}
+.pc-quick{background:var(--gold);color:var(--black);border:none;padding:9px 18px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:var(--font-ar);transition:.15s;border-radius:2px}
 .pc-quick:hover{background:var(--gold2)}
-.pc-body{padding:14px 14px 18px}
-.pc-cat{font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:5px}
-.pc-name{font-size:14px;color:var(--white);font-weight:600;margin-bottom:8px;line-height:1.4}
+.pc-body{padding:10px 10px 12px}
+.pc-cat{font-size:9px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px}
+.pc-name{font-size:12px;color:var(--white);font-weight:600;margin-bottom:6px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .pc-price-row{display:flex;align-items:center;justify-content:space-between}
-.pc-price{font-family:var(--font-en);font-size:18px;color:var(--gold);font-weight:600}
-.pc-price-old{font-size:13px;color:var(--muted);text-decoration:line-through;margin-right:6px}
-.pc-fav{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:2px;transition:.2s}
+.pc-price{font-family:var(--font-en);font-size:15px;color:var(--gold);font-weight:600}
+.pc-price-old{font-size:11px;color:var(--muted);text-decoration:line-through;margin-right:4px}
+.pc-fav{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:2px;transition:.2s;flex-shrink:0}
 .pc-fav.on{color:var(--gold)}
 
 /* ── Product Modal ── */
@@ -200,10 +210,10 @@ footer{background:var(--black2);border-top:1px solid var(--border);padding:40px 
 .wa-float{position:fixed;bottom:24px;right:24px;z-index:150;background:#25D366;color:#fff;border:none;width:56px;height:56px;border-radius:50%;font-size:26px;cursor:pointer;box-shadow:0 4px 20px rgba(37,211,102,.4);display:flex;align-items:center;justify-content:center;transition:.2s;text-decoration:none}
 .wa-float:hover{background:#1ebc59;transform:scale(1.1)}
 
-/* ── Loading ── */
-.loading-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px;max-width:1200px;margin:0 auto}
-.pc-skel{background:var(--black2);border:1px solid var(--border);height:380px;animation:shimmer 1.5s infinite linear;background:linear-gradient(90deg,var(--black2) 25%,var(--black3) 50%,var(--black2) 75%);background-size:200%}
-@keyframes shimmer{to{background-position:-200% 0}}
+/* ── Loading spinner ── */
+.loading-grid{display:flex;align-items:center;justify-content:center;min-height:200px}
+.spin{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 /* ── Toast ── */
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--black);padding:10px 22px;font-size:13px;font-weight:700;z-index:999;animation:tf 2.5s forwards;white-space:nowrap;pointer-events:none}
@@ -215,10 +225,8 @@ footer{background:var(--black2);border-top:1px solid var(--border);padding:40px 
   .hero{height:70vh}
   .modal{grid-template-columns:1fr}
   .modal-img{aspect-ratio:4/3}
-  .products-grid{grid-template-columns:repeat(2,1fr);gap:12px}
 }
 @media(max-width:420px){
-  .products-grid{grid-template-columns:repeat(2,1fr);gap:8px}
   .stats{grid-template-columns:1fr}
   .stat{border-left:none;border-bottom:1px solid var(--border)}
 }
@@ -236,7 +244,6 @@ footer{background:var(--black2);border-top:1px solid var(--border);padding:40px 
     <a href="#about">عن VELORA</a>
   </nav>
   <a href="#home" class="logo-wrap" id="topLogo">
-    <img src="/velora-logo.png" alt="VELORA Logo" class="logo-img">
     <div class="logo-text">
       <span class="v-name">VELORA</span>
       <span class="v-sub">Clothing & Perfumes</span>
@@ -301,9 +308,7 @@ footer{background:var(--black2);border-top:1px solid var(--border);padding:40px 
 
   <div id="prodContainer">
     <div class="loading-grid" id="loadingGrid">
-      <div class="pc-skel"></div><div class="pc-skel"></div>
-      <div class="pc-skel"></div><div class="pc-skel"></div>
-      <div class="pc-skel"></div><div class="pc-skel"></div>
+      <div class="spin"></div>
     </div>
     <div class="products-grid" id="grid" style="display:none"></div>
   </div>
@@ -445,11 +450,7 @@ var WA_NUM = '212778878421';
 /* token removed — never put credentials in client-side code */
 
 /* ── Demo Products ── */
-var DEMO = [
-  {id:'b1',name:'طقم مجوهرات ذهبي رادكو',nameEn:'Radko Gold Jewelry Set',cat:'مجوهرات',tag:'جديد',price:199,old:0,
-   img:'/velora/imgs/product-1.jpg',
-   sizes:['مقاس موحد'],desc:'طقم مجوهرات ذهبي فاخر يتضمن سلسلة، سوار، خاتم وأقراط — من أجود أنواع المعادن المطلية بالذهب، مثالي للإهداء والمناسبات.'},
-];
+var DEMO = [];
 
 /* ── State ── */
 var PRODS = [];
@@ -473,10 +474,8 @@ function getAdminProds(){
 
 /* ── Fetch or use demo ── */
 async function fetchJSON(url){
-  var r = await fetch(url, {
-    cache: 'no-store',
-    headers: {'Cache-Control':'no-cache', 'Pragma':'no-cache'}
-  });
+  /* لا نضيف Cache-Control request-headers — تكسر CORS على GitHub Pages */
+  var r = await fetch(url, {cache: 'no-store'});
   if(!r.ok) throw new Error(r.status);
   return r.json();
 }
@@ -510,8 +509,8 @@ async function loadProducts(){
   var adminProds = getAdminProds();
   if(adminProds){ PRODS = adminProds; renderProducts(); return; }
 
-  /* 4. منتج تجريبي */
-  PRODS = DEMO;
+  /* 4. لا توجد منتجات بعد */
+  PRODS = [];
   renderProducts();
 }
 
@@ -540,7 +539,11 @@ function renderProducts(){
     return p.cat === curFilter;
   });
   if(!list.length){
-    g.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:40px">لا توجد منتجات في هذه الفئة</div>';
+    g.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 20px">'+
+      '<div style="font-size:48px;margin-bottom:16px">🛍</div>'+
+      '<div style="color:var(--gold);font-size:16px;font-weight:600;margin-bottom:8px">قريباً</div>'+
+      '<div style="color:var(--muted);font-size:13px">المنتجات ستُضاف قريباً — تابعنا!</div>'+
+    '</div>';
     return;
   }
   var s = getAdminSettings();

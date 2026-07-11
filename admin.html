@@ -297,7 +297,8 @@ body{background:var(--black);color:var(--white);overflow-x:hidden}
   <div class="topbar">
     <span class="topbar-logo">VELORA</span>
     <div class="topbar-actions">
-      <button class="btn-sm" onclick="window.open('/velora/','_blank')">🔗 المتجر</button>
+      <button class="btn-sm" onclick="window.open('https://mmonami176-sudo.github.io/VELORA/','_blank')">🔗 المتجر</button>
+      <span id="ghDot" style="font-size:11px;color:var(--muted);display:none">● GitHub</span>
       <button class="btn-sm danger" onclick="logout()">خروج</button>
     </div>
   </div>
@@ -999,13 +1000,32 @@ function updateFDPreview(){
   prev.textContent = document.getElementById('fdText').value || '🚚 توصيل مجاني';
 }
 
+function maskTok(t){
+  if(!t || t.length < 12) return '●●●●●●●●';
+  return t.substring(0,6)+'●●●●●●●●'+t.substring(t.length-4);
+}
+
 /* ── Settings Page ── */
 function renderSettingsPage(){
   var s = getSettings();
   var waEl = document.getElementById('waNum');
   if(waEl) waEl.value = s.whatsapp || '212778878421';
   var ghEl = document.getElementById('ghStatus');
-  if(ghEl) ghEl.textContent = s.ghToken ? '✅ التوكن محفوظ — المتجر سيُحدَّث تلقائياً عند إضافة منتج' : '⚠️ لم يتم إضافة توكن بعد — المنتجات لن تظهر للزبناء';
+  if(ghEl){
+    if(s.ghToken){
+      ghEl.innerHTML = '✅ التوكن محفوظ: <code style="background:#1a1a1a;padding:2px 6px;border-radius:3px;font-size:11px;color:var(--gold)">'+maskTok(s.ghToken)+'</code>';
+    } else {
+      ghEl.textContent = '⚠️ لم يتم إضافة توكن — المنتجات لن تظهر للزبناء';
+      ghEl.style.color = '#e74c3c';
+    }
+  }
+  /* مؤشر الاتصال في شريط العنوان */
+  var dot = document.getElementById('ghDot');
+  if(dot){
+    dot.style.display = 'inline';
+    dot.style.color = s.ghToken ? '#27ae60' : '#e74c3c';
+    dot.textContent  = s.ghToken ? '● متصل بـ GitHub' : '● غير متصل';
+  }
 }
 async function changePwd(){
   var cur = document.getElementById('curPwd').value;
